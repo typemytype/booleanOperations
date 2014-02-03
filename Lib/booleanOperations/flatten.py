@@ -1115,9 +1115,9 @@ def _flattenSegment(segment, approximateSegmentLength=_approximateSegmentLength)
         return [onCurve2]
     est = _estimateCubicCurveLength(onCurve1, offCurve1, offCurve2, onCurve2) / approximateSegmentLength
     flat = []
-    minStep = 0.01564
+    minStep = 0.1564
     step = 1.0 / est
-    if step > .5:
+    if step > .3:
         step = minStep
     t = step
     while t < 1:
