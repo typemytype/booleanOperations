@@ -88,6 +88,8 @@ Perform a **xor** with the `other`. Other must be a glyph or `BooleanGlyph` obje
 
 Perform a **union** on it self. This will remove all overlapping contours and self intersecting contours.
 
+    result = BooleanGlyph(glyph).removeOverlap()
+
 ----
 
 #### booleanGlyph.name
