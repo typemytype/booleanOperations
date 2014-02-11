@@ -26,6 +26,7 @@
 #ifndef clipper_hpp
 #define clipper_hpp
 
+#include <string>
 #include <vector>
 #include <stdexcept>
 #include <cstring>
