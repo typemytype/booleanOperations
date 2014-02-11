@@ -178,7 +178,9 @@ class BooleanGlyph(object):
         func = getattr(manager, operation)
 
         if operation == "union":
-            contours = self.contours + other.contours
+            contours = self.contours
+            if other is not None:
+                contours += other.contours
             func(contours, destination.getPointPen())    
         else:
             subjectContours = self.contours
@@ -217,3 +219,7 @@ class BooleanGlyph(object):
 
     def xor(self, other):
         return self._booleanMath("xor", other)
+
+    def removeOverlap(self):
+        return self._booleanMath("union", None)
+
