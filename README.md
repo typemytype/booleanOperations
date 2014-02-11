@@ -11,7 +11,7 @@ Containing a `BooleanOperationManager` handling all boolean operations on paths.
 
     from booleanOperations import BooleanOperationManager
     
-    manager = Booleanoperationmanager()
+    manager = BooleanOperationManager()
 
     
 ### BooleanOperationManager()
