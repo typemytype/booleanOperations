@@ -3,6 +3,10 @@ BooleanOperations
 
 Boolean operations on paths based on a super fast [polygon clipper library by Angus Johnson](http://www.angusj.com/delphi/clipper.php).
 
+To compile the cpp wrapper [cython](http://cython.org) is required.
+
+    python setup.py build_ext --inplace
+
 
 BooleanOperationManager
 -----------------------
@@ -80,6 +84,10 @@ Perform a **xor** with the `other`. Other must be a glyph or `BooleanGlyph` obje
     result = BooleanGlyph(glyph).xor(BooleanGlyph(glyph2))
     result = BooleanGlyph(glyph) ^ BooleanGlyph(glyph2)
 
+#### booleanGlyph.removeOverlap()
+
+Perform a **union** on it self. This will remove all overlapping contours and self intersecting contours.
+
 ----
 
 #### booleanGlyph.name
@@ -113,8 +121,3 @@ List the **components** of the glyph.
 #### booleanGlyph.anchors
 
 List the **anchors** of the glyph.
-
-
-
-
-
