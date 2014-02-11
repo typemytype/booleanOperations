@@ -832,14 +832,15 @@ class OutputContour(object):
                         #p = flatSegment[0]
                         for p in flatSegment:
                             previousIntersectionPoint = self._scalePoint(p)
+                            pointInfo = dict()
                             kwargs = dict()
                             if p in flatInputPointsSegmentDict:
                                 lineSegment = flatInputPointsSegmentDict[p]
                                 segmentPoint =  lineSegment.points[-1]
-                                kwargs["smooth"] = segmentPoint.smooth
-                                kwargs["name"] = segmentPoint.name
+                                pointInfo["smooth"] = segmentPoint.smooth
+                                pointInfo["name"] = segmentPoint.name
                                 kwargs.update(segmentPoint.kwargs)
-                            convertedSegments.append(OutputPoint(coordinates=previousIntersectionPoint, segmentType="line", **kwargs))
+                            convertedSegments.append(OutputPoint(coordinates=previousIntersectionPoint, segmentType="line", kwargs=kwargs, **pointInfo))
                         continue
                     tValues = None
                     lastPointWithAttributes = None
@@ -928,7 +929,6 @@ class OutputContour(object):
 
     def drawPoints(self, pointPen):
         pointPen.beginPath()
-
         points = []
         for segment in self.segments:
             points.extend(segment.points)
