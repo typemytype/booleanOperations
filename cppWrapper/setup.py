@@ -5,13 +5,19 @@ from Cython.Distutils import build_ext
 # requires cython --> http://cython.org
 # python setup.py build_ext --inplace
  
-ext =	Extension("pyClipper", 
-                sources=["pyClipper.pyx", "clipper.cpp"],
-                language="c++",              # this causes Cython to create C++ source
-				include_dirs=["include"],
-				)
+ext = Extension(
+	"pyClipper", 
+	sources=["pyClipper.pyx", "clipper.cpp"],
+	language="c++",  # this causes Cython to create C++ source
+	include_dirs=["include"]
+)
 
 setup(
-        ext_modules=[ext],
-        cmdclass = {'build_ext': build_ext},
+	name="pyClipper",
+	version="4.8.5",
+	description="Python binding for the Clipper library of Angus Johnson",
+	url="https://sites.google.com/site/maxelsbackyard/home/pyclipper",
+	
+	ext_modules=[ext],
+	cmdclass = {"build_ext": build_ext}
 )
