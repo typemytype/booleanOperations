@@ -9,5 +9,4 @@ setup(
     license="MIT",
     packages=["booleanOperations"],
     package_dir={"": "Lib"},
-    package_data={"booleanOperations": ["pyClipper.so"]}
 )
