@@ -38,7 +38,7 @@
 #include <cstdlib>
 
 //Workaround for older compilers that don't have std::abs
-#if (__GNUC__ == 2 && __GNUC_MINOR__ <= 97) || (defined(BOOST_MSVC) && _MSC_VER <= 1200)
+#if (__GNUC__ == 2 && __GNUC_MINOR__ <= 97) || (defined(_MSC_VER) && _MSC_VER < 1600)
 namespace std
 {
     long long abs(long long x) { return x < 0 ? -x : x; }
