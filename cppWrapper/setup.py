@@ -9,7 +9,7 @@ ext = Extension(
 	"pyClipper", 
 	sources=["pyClipper.pyx", "clipper.cpp"],
 	language="c++",  # this causes Cython to create C++ source
-	include_dirs=["include"]
+	depends=["clipper.hpp"],
 )
 
 setup(
