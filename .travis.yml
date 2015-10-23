@@ -1,0 +1,32 @@
+os:
+  - osx
+env:
+  matrix:
+  - INSTALL_TYPE='macpython' VERSION=2.7.10 CC=clang CXX=clang++
+  - INSTALL_TYPE='macpython' VERSION=3.4.3 CC=clang CXX=clang++
+  - INSTALL_TYPE='macpython' VERSION=3.5.0 CC=clang CXX=clang++
+install:
+  - source terryfy/travis_tools.sh
+  - get_python_environment $INSTALL_TYPE $VERSION venv
+  - $PIP_CMD install --upgrade wheel
+  - $PIP_CMD install cython
+script:
+  - $PIP_CMD wheel -v -w . .
+after_success:
+  - $PYTHON_EXE setup.py sdist -d . --formats=gztar,zip
+before_deploy:
+  - export GZTAR=$(ls *.tar.gz)
+  - export ZIP=$(ls *.zip)
+  - export WHL=$(ls *.whl)
+# deploy:
+#   provider: releases
+#   api_key:
+#     secure: <put your GitHub API key here>
+#   file:
+#     - "${GZTAR}"
+#     - "${ZIP}"
+#     - "${WHL}"
+#   skip_cleanup: true
+#   on:
+#     repo: typemytype/booleanOperations
+#     tags: true
