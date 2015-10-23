@@ -1001,12 +1001,13 @@ def _getClockwise(points):
 # Misc. Math
 # ----------
 
-def _tValueForPointOnCubicCurve(point, (pt1, pt2, pt3, pt4), isHorizontal=0):
+def _tValueForPointOnCubicCurve(point, cubicCurve, isHorizontal=0):
     """
     Finds a t value on a curve from a point.
     The points must be originaly be a point on the curve.
     This will only back trace the t value, needed to split the curve in parts
     """
+    pt1, pt2, pt3, pt4 = cubicCurve
     a, b, c, d = bezierTools.calcCubicParameters(pt1, pt2, pt3, pt4)
     solutions = bezierTools.solveCubic(a[isHorizontal], b[isHorizontal], c[isHorizontal],
         d[isHorizontal] - point[isHorizontal])
@@ -1035,7 +1036,7 @@ def _tValueForPointOnQuadCurve(point, pts, isHorizontal=0):
         for t in subSolutions:
             solutionsDict[(t, index)] = _getQuadPoint(t, previousOnCurve, pt1, pt2)
         previousOnCurve = pt2
-    solutions = solutionsDict.keys()
+    solutions = list(solutionsDict.keys())
     if not solutions and not isHorizontal:
         return _tValueForPointOnQuadCurve(point, pts, isHorizontal=1)
     if len(solutions) > 1:
@@ -1048,7 +1049,8 @@ def _tValueForPointOnQuadCurve(point, pts, isHorizontal=0):
         solutions = [intersectionLenghts[minDist]]
     return solutions
 
-def _tValueForPointOnLine(point, (pt1, pt2)):
+def _tValueForPointOnLine(point, line):
+    pt1, pt2 = line
     dist = _distance(pt1, point)
     totalDist = _distance(pt1, pt2)
     return [dist / totalDist]
@@ -1151,11 +1153,12 @@ def _estimateCubicCurveLength(pt0, pt1, pt2, pt3, precision=10):
         length += _distance(pta, ptb)
     return length
 
-def _mid((x0, y0), (x1, y1)):
+def _mid(pt1, pt2):
     """
     (Point, Point) -> Point
     Return the point that lies in between the two input points.
     """
+    (x0, y0), (x1, y1) = pt1, pt2
     return 0.5 * (x0 + x1), 0.5 * (y0 + y1)
 
 def _getCubicPoint(t, pt0, pt1, pt2, pt3):
