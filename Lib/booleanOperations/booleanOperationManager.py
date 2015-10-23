@@ -1,6 +1,7 @@
+from __future__ import print_function, division, absolute_import
 from fontTools.pens.basePen import BasePen
-from flatten import InputContour, OutputContour
-import pyClipper
+from .flatten import InputContour, OutputContour
+from . import pyClipper
 
 
 """

@@ -1,3 +1,4 @@
+from __future__ import print_function, division, absolute_import
 import math
 from fontTools.pens.basePen import BasePen
 from fontTools.misc import bezierTools
