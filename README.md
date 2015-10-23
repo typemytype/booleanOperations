@@ -3,25 +3,51 @@ BooleanOperations
 
 Boolean operations on paths based on a super fast [polygon clipper library by Angus Johnson](http://www.angusj.com/delphi/clipper.php).
 
-To compile the cpp wrapper [cython](http://cython.org) is required.
+You can download the latest version from:
 
-    python setup.py build_ext --inplace
+<https://github.com/typemytype/booleanOperations/releases/latest>.
 
+Install
+-------
 
-A note on `setup.py`
-------------
+[Pip](https://pip.pypa.io/en/stable/) is the recommended tool to download and install booleanOperations.
 
-The included `setup.py` file operates in one of two modes depending on whether or not the file `dev` is present in the project root directory.
+If your Python doesn't come with pip pre-installed, you can install it by downloading the official [get-pip.py](https://bootstrap.pypa.io/get-pip.py), and running it as a normal script:
 
-If the file is present -- i.e., "development mode", as in the Github repository --, [Cython](http://cython.org/) is required to convert the `.pyx` files to `.cpp`.
+```
+python get-pip.py
+```
 
-If the `dev` file is not present -- i.e., "distribution mode" --, then no Cython is required and the pre-generated `.cpp` files contained in the source distribution are used.
+To install the booleanOperations package with pip, you do:
 
-Of course, in both cases a C++ compiler is needed to build the Python extension module.
+```
+pip install --find-links https://github.com/typemytype/booleanOperations/releases/latest booleanOperations
+```
 
-This mechanism allows source distributions to be installed on systems which don't have Cython or have a different versions.
+Pip will first try to download the Python [wheel](http://pythonwheels.com/) archive that was compiled for your platform and Python version.
 
-The idea comes from <https://github.com/MattShannon/bandmat>. 
+For the current version, wheels are only available for **Python 2.7** on **OS X** (10.6 and above) and **Windows** (32-bit).
+
+If the wheel isn't available, pip will attempt to compile the package from the source distribution (`.tar.gz` or `.zip`).
+
+Build
+-----
+
+The included `setup.py` file operates in one of two modes depending on the presence/absence of an empty file named `dev` in the project root directory.
+
+When the file is present, as in the Github repository, then [Cython](http://cython.org/) is required in order to convert the `.pyx` files to `.cpp`.
+
+In the source distributions this 'dev' file is missing, and pre-generated `.cpp` files are present instead.
+
+This mechanism allows source distributions to be installed on systems which don't have Cython, or have a different versions (the idea comes from <https://github.com/MattShannon/bandmat>).
+
+In both cases a C++ compiler is needed to build the Python extension module.
+
+For example, to compile it in the same location as the Python sources:
+
+```
+python setup.py build_ext --inplace
+```
 
 BooleanOperationManager
 -----------------------
