@@ -8,6 +8,21 @@ To compile the cpp wrapper [cython](http://cython.org) is required.
     python setup.py build_ext --inplace
 
 
+A note on `setup.py`
+------------
+
+The included `setup.py` file operates in one of two modes depending on whether or not the file `dev` is present in the project root directory.
+
+If the file is present -- i.e., "development mode", as in the Github repository --, [Cython](http://cython.org/) is required to convert the `.pyx` files to `.cpp`.
+
+If the `dev` file is not present -- i.e., "distribution mode" --, then no Cython is required and the pre-generated `.cpp` files contained in the source distribution are used.
+
+Of course, in both cases a C++ compiler is needed to build the Python extension module.
+
+This mechanism allows source distributions to be installed on systems which don't have Cython or have a different versions.
+
+The idea comes from <https://github.com/MattShannon/bandmat>. 
+
 BooleanOperationManager
 -----------------------
 
