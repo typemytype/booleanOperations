@@ -1,10 +1,11 @@
+from __future__ import print_function, division, absolute_import
 import weakref
 from copy import deepcopy
 
 from robofab.pens.pointPen import AbstractPointPen
 from defcon.pens.clockwiseTestPointPen import ClockwiseTestPointPen
 
-from booleanOperationManager import BooleanOperationManager
+from .booleanOperationManager import BooleanOperationManager
 
 manager = BooleanOperationManager()
 
