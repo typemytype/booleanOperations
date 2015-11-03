@@ -68,7 +68,7 @@ class BooleanContour(object):
         if self._clockwise is None:
             pointPen = ClockwiseTestPointPen()
             self.drawPoints(pointPen)
-            self._clockwiseCache = pointPen.getIsClockwise()
+            self._clockwise = pointPen.getIsClockwise()
         return self._clockwise
 
     clockwise = property(_get_clockwise)
@@ -78,7 +78,7 @@ class BooleanContour(object):
             from robofab.pens.boundsPen import BoundsPen
             pen = BoundsPen(None)
             self.draw(pen)
-            self._boundsCache = pen.bounds
+            self._bounds = pen.bounds
         return self._bounds
 
     bounds = property(_get_bounds)
