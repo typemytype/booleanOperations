@@ -284,6 +284,11 @@ class InputPoint(object):
         )
         return copy
 
+    def __str__(self):
+        return "%s %s" % (self.segmentType , self.coordinates)
+
+    def __repr__(self):
+        return self.__str__()
 
 # -------------
 # Input Support
@@ -319,9 +324,10 @@ class ContourPointDataPen:
         lastPoint = self._points[-1]
         if firstPoint.segmentType is not None and lastPoint.segmentType is not None:
             if firstPoint.coordinates == lastPoint.coordinates:
-                self._points = self._points[1:]
-                if firstPoint.segmentType != "line":
-                    lastPoint.segmentType = firstPoint.segmentType
+                if (firstPoint.segmentType in ["line", "move"]):
+                    del self._points[0]
+                else:
+                    raise AssertionError("Unhandled point type sequence")
         # done
         return self._points
 
@@ -480,6 +486,10 @@ class OutputContour(object):
     # --------------------------
 
     def reCurveFromEntireInputContour(self, inputContour):
+        """
+        Match if entire input contour matches entire output contour,
+        allowing for different start point.
+        """
         if self.clockwise:
             inputFlat = inputContour.clockwiseFlat
         else:
@@ -736,7 +746,7 @@ class OutputContour(object):
                                 foundStartingPointIndex = index
                                 break
                     segment.points = segment.points[foundStartingPointIndex:] + segment.points[:foundStartingPointIndex]
-                # split list based on oncurvepoints and intersection points
+                # split list based on oncurvepoints and intersection points, aka possibleStartingPoints.
                 segmentedFlatPoints = [[]]
                 for p in segment.points:
                     segmentedFlatPoints[-1].append(p)
@@ -745,8 +755,8 @@ class OutputContour(object):
                 if not segmentedFlatPoints[-1]:
                     segmentedFlatPoints.pop(-1)
                 if len(segmentedFlatPoints) > 1 and len(segmentedFlatPoints[0]) == 1:
-                    ## possible starting point of last part of the curve
-                    ## check of the both have the same inputSegment or reversedInputSegment
+                    ## if last segment is a curve, the start point may be last point on the last segment. If so, merge them.
+                    ## check if they both have the same inputSegment or reversedInputSegment
                     fp = segmentedFlatPoints[0][0]
                     lp = segmentedFlatPoints[-1][-1]
                     mergeFirstSegments = False
@@ -767,8 +777,19 @@ class OutputContour(object):
                                 mergeFirstSegments = True
                             elif lp == reversedFirstInputSegment.scaledPreviousOnCurve:
                                 mergeFirstSegments = True
-                    elif not hasOncurvePoints and _distance(fp, lp) < _approximateSegmentLength*clipperScale:
-                        mergeFirstSegments = True
+                    elif not hasOncurvePoints and _distance(fp, lp):
+                        # Merge last segment with first segment if the distance between the last point and the first
+                        # point is less than the step distance between the last two points. _approximateSegmentLength
+                        # can be significantly smaller than this step size.
+                        if len(segmentedFlatPoints[-1])  > 1:
+                            f1 = segmentedFlatPoints[-1][-2]
+                            f2 = segmentedFlatPoints[-1][-1]
+                            stepLen = _distance(f1, f2)
+                        else:
+                            stepLen = _approximateSegmentLength*clipperScale
+
+                        if _distance(fp, lp) <= stepLen:
+                                mergeFirstSegments = True
                     if mergeFirstSegments:
                         segmentedFlatPoints[0] = segmentedFlatPoints[-1] + segmentedFlatPoints[0]
                         segmentedFlatPoints.pop(-1)
@@ -795,14 +816,19 @@ class OutputContour(object):
                         else:
                             break
                     canDoFastLine = True
-                    if fp is None and ep is None:
+                    if ep is None and ((fp is None) or (len(flatSegment) == 2)):
+                        # if fp is not None, then it is a flattened part of a curve, and should be used to derive the input segment.
+                        # It may be either the first or second point.
+                        # If fp is None, I use the original logic.
+                        if fp is None:
+                            fp = flatSegment[-1]
                         # flat segment only contains two intersection points or one intersection point and one input oncurve point
                         # this can be ignored cause this is a very small line
                         # and will be converted to a simple line
                         if self.clockwise:
-                            inputSegment = reversedFlatInputPointsSegmentDict.get(flatSegment[-1])
+                            inputSegment = reversedFlatInputPointsSegmentDict.get(fp)
                         else:
-                            inputSegment = flatInputPointsSegmentDict.get(flatSegment[-1])
+                            inputSegment = flatInputPointsSegmentDict.get(fp)
                     else:
                         # get inputSegment based on the clockwise settings
                         inputSegment = flatInputPointsSegmentDict[fp]
@@ -869,6 +895,8 @@ class OutputContour(object):
                         lastPointWithAttributes = inputSegment.points[-1]
                     elif flatSegment[0] != inputSegment.flat[0] and flatSegment[-1] != inputSegment.flat[-1]:
                         # needed the a middle part of the segment
+                        if previousIntersectionPoint is None:
+                            previousIntersectionPoint = self._scalePoint(flatSegment[0])
                         tValues = inputSegment.tValueForPoint(previousIntersectionPoint)
                         searchPoint = self._scalePoint(flatSegment[-1])
                         tValues.extend(inputSegment.tValueForPoint(searchPoint))
