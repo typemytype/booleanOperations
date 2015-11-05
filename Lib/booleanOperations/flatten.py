@@ -38,7 +38,7 @@ optimization ideas:
   skipped. this cound be done roughly with bounds.
   this should probably be done by extenal callers.
 - set a proper starting points of the output segments based on known points
-  known points are: 
+  known points are:
     input oncurve points
     if nothing found intersection points (only use this is in the final curve fitting stage)
 
@@ -180,7 +180,7 @@ class InputSegment(object):
                 mid1y = pt0y + 0.66666666666666667 * (pt1y - pt0y)
                 mid2x = pt2x + 0.66666666666666667 * (pt1x - pt2x)
                 mid2y = pt2y + 0.66666666666666667 * (pt1y - pt2y)
-                
+
                 convertedQuadPointToFlatten = [currentOnCurve, (mid1x, mid1y), (mid2x, mid2y), pt2]
                 flat.extend(_flattenSegment(convertedQuadPointToFlatten))
                 currentOnCurve = pt2
@@ -591,7 +591,7 @@ class OutputContour(object):
                         break
                     test.append(s.points[-1])
                 if test == inputSegment.flat and inputSegment.segmentType != "line":
-                    # insert new segment                    
+                    # insert new segment
                     newSegment = OutputSegment(
                         segmentType=inputSegment.segmentType,
                         points=[
@@ -634,7 +634,7 @@ class OutputContour(object):
     def reCurveSubSegments(self, inputContours):
         if not self.segments:
             # its all done
-            return 
+            return
         # the inputContours has some curved segments
         # if not it all the segments will be converted at the end
         if self.reCurveSubSegmentsCheckInputContoursOnHasCurve(inputContours):
@@ -661,7 +661,7 @@ class OutputContour(object):
                     for p in inputSegment.flat:
                         flatInputPointsSegmentDict[p] = inputSegment
                     flatIntputOncurves.add(inputSegment.scaledPreviousOnCurve)
-                    
+
                 for inputSegment in reversedSegments:
                     if inputSegment.used:
                         continue
@@ -709,7 +709,7 @@ class OutputContour(object):
                     continue
                 remainingSubSegment.points.extend(segment.points)
             newSegments.append(remainingSubSegment)
-            # loop over all segments 
+            # loop over all segments
             for segment in newSegments:
                 # handle only segments tagged as intersect
                 if segment.segmentType != "intersect":
@@ -802,7 +802,7 @@ class OutputContour(object):
                         if self.clockwise:
                             inputSegment = reversedFlatInputPointsSegmentDict.get(flatSegment[-1])
                         else:
-                            inputSegment = flatInputPointsSegmentDict.get(flatSegment[-1]) 
+                            inputSegment = flatInputPointsSegmentDict.get(flatSegment[-1])
                     else:
                         # get inputSegment based on the clockwise settings
                         inputSegment = flatInputPointsSegmentDict[fp]
@@ -888,7 +888,7 @@ class OutputContour(object):
                             for point in inputSegment.points
                         ]
                         convertedSegments.extend(newCurve)
-                        previousIntersectionPoint = None                    
+                        previousIntersectionPoint = None
                     # if we found some tvalue, split the curve and get the requested parts of the splitted curves
                     if tValues:
                         newCurve = inputSegment.split(tValues)
@@ -1089,7 +1089,7 @@ def _checkFlatPoints(points):
             continue
         elif y == previousY:
             continue
-        if (x, y) not in _points: 
+        if (x, y) not in _points:
             # is it possible that two flat point are on top of eachother???
             _points.append((x, y))
         previousX, previousY = x, y
@@ -1126,7 +1126,7 @@ def _flattenSegment(segment, approximateSegmentLength=_approximateSegmentLength)
     while t < 1:
         pt = _getCubicPoint(t, onCurve1, offCurve1, offCurve2, onCurve2)
         flat.append(pt)
-        t += step 
+        t += step
     flat.append(onCurve2)
     return flat
 
@@ -1134,7 +1134,7 @@ def _distance(pt1, pt2):
     return math.sqrt((pt1[0] - pt2[0]) ** 2 + (pt1[1] - pt2[1]) ** 2)
 
 def _pointOnLine(pt1, pt2, a):
-    return abs(_distance(pt1, a) + _distance(a, pt2) - _distance(pt1, pt2)) < epsilon  
+    return abs(_distance(pt1, a) + _distance(a, pt2) - _distance(pt1, pt2)) < epsilon
 
 def _estimateCubicCurveLength(pt0, pt1, pt2, pt3, precision=10):
     """
