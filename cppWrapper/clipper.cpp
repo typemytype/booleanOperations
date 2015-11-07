@@ -32,6 +32,7 @@
 
 #include "clipper.hpp"
 #include <cmath>
+#include <algorithm>
 #include <vector>
 #include <stdexcept>
 #include <cstring>
