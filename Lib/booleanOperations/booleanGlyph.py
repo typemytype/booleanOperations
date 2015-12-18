@@ -9,6 +9,7 @@ from .booleanOperationManager import BooleanOperationManager
 
 manager = BooleanOperationManager()
 
+
 class BooleanGlyphDataPointPen(AbstractPointPen):
 
     def __init__(self, glyph):
@@ -37,6 +38,7 @@ class BooleanGlyphDataPointPen(AbstractPointPen):
     def addComponent(self, baseGlyphName, transformation):
         self._glyph.components.append((baseGlyphName, transformation))
 
+
 class BooleanContour(object):
 
     """
@@ -51,7 +53,7 @@ class BooleanContour(object):
     def __len__(self):
         return len(self._points)
 
-    ## shallow contour API
+    # shallow contour API
 
     def draw(self, pen):
         from robofab.pens.adapterPens import PointToSegmentPen
@@ -83,36 +85,37 @@ class BooleanContour(object):
 
     bounds = property(_get_bounds)
 
+
 class BooleanGlyph(object):
-    
+
     """
     Glyph like object handling boolean operations.
-    
+
     union:
         result = BooleanGlyph(glyph).union(BooleanGlyph(glyph2))
         result = BooleanGlyph(glyph) | BooleanGlyph(glyph2)
-    
+
     difference:
         result = BooleanGlyph(glyph).difference(BooleanGlyph(glyph2))
         result = BooleanGlyph(glyph) % BooleanGlyph(glyph2)
-    
+
     intersection:
         result = BooleanGlyph(glyph).intersection(BooleanGlyph(glyph2))
         result = BooleanGlyph(glyph) & BooleanGlyph(glyph2)
-    
+
     xor:
         result = BooleanGlyph(glyph).xor(BooleanGlyph(glyph2))
         result = BooleanGlyph(glyph) ^ BooleanGlyph(glyph2)
-    
+
     """
-    
+
     contourClass = BooleanContour
 
     def __init__(self, glyph=None, copyContourData=True):
         self.contours = []
         self.components = []
         self.anchors = []
-        
+
         self.name = None
         self.unicodes = None
         self.width = None
@@ -123,7 +126,7 @@ class BooleanGlyph(object):
             pen = self.getPointPen()
             pen.copyContourData = copyContourData
             glyph.drawPoints(pen)
-            
+
             self.name = glyph.name
             self.unicodes = glyph.unicodes
             self.width = glyph.width
@@ -132,7 +135,7 @@ class BooleanGlyph(object):
 
             if not isinstance(glyph, self.__class__):
                 self.getSourceGlyph = weakref.ref(glyph)
-    
+
     def __repr__(self):
         return "<BooleanGlyph %s>" % self.name
 
@@ -144,14 +147,14 @@ class BooleanGlyph(object):
 
     def getSourceGlyph(self):
         return None
-    
-    ## shalllow glyph API
+
+    # shalllow glyph API
 
     def draw(self, pen):
         from robofab.pens.adapterPens import PointToSegmentPen
         pointPen = PointToSegmentPen(pen)
         self.drawPoints(pointPen)
-    
+
     def drawPoints(self, pointPen):
         for contour in self.contours:
             contour.drawPoints(pointPen)
@@ -161,7 +164,7 @@ class BooleanGlyph(object):
             pointPen.beginPath()
             pointPen.addPoint(pt=pt, segmentType="move", smooth=False, name=name)
             pointPen.endPath()
-    
+
     def getPen(self):
         from robofab.pens.adapterPens import SegmentToPointPen
         return SegmentToPointPen(self.getPointPen())
@@ -182,16 +185,16 @@ class BooleanGlyph(object):
             contours = self.contours
             if other is not None:
                 contours += other.contours
-            func(contours, destination.getPointPen())    
+            func(contours, destination.getPointPen())
         else:
             subjectContours = self.contours
             clipContours = other.contours
             func(subjectContours, clipContours, destination.getPointPen())
         return destination
-    
+
     def __or__(self, other):
         return self.union(other)
-    
+
     __ror__ = __ior__ = __or__
 
     def __mod__(self, other):
@@ -201,7 +204,7 @@ class BooleanGlyph(object):
 
     def __and__(self, other):
         return self.intersection(other)
-    
+
     __rand__ = __iand__ = __and__
 
     def __xor__(self, other):

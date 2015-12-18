@@ -1,5 +1,4 @@
 from __future__ import print_function, division, absolute_import
-from fontTools.pens.basePen import BasePen
 from .flatten import InputContour, OutputContour
 from . import pyClipper
 
@@ -22,8 +21,8 @@ class BooleanOperationManager(object):
         clipInputContours = [InputContour(contour) for contour in clipContours if contour and len(contour) > 1]
         inputContours = subjectInputContours + clipInputContours
 
-        resultContours = pyClipper.clipExecute([subjectInputContour.originalFlat for subjectInputContour in subjectInputContours], 
-                                               [clipInputContour.originalFlat for clipInputContour in clipInputContours], 
+        resultContours = pyClipper.clipExecute([subjectInputContour.originalFlat for subjectInputContour in subjectInputContours],
+                                               [clipInputContour.originalFlat for clipInputContour in clipInputContours],
                                                operation, subjectFillType="noneZero", clipFillType="noneZero")
         # convert to output contours
         outputContours = [OutputContour(contour) for contour in resultContours]
@@ -55,13 +54,13 @@ class BooleanOperationManager(object):
 
     def union(self, contours, outPen):
         return self._performOperation("union", contours, [], outPen)
-    
+
     def difference(self, subjectContours, clipContours, outPen):
         return self._performOperation("difference", subjectContours, clipContours, outPen)
-    
+
     def intersection(self, subjectContours, clipContours, outPen):
         return self._performOperation("intersection", subjectContours, clipContours, outPen)
-    
+
     def xor(self, subjectContours, clipContours, outPen):
         return self._performOperation("xor", subjectContours, clipContours, outPen)
 
@@ -73,17 +72,14 @@ class BooleanOperationManager(object):
         inputFlatPoints = set()
         for contour in inputContours:
             inputFlatPoints.update(contour.originalFlat)
-        
-        resultContours = pyClipper.clipExecute([inputContour.originalFlat for inputContour in inputContours], 
-                                               [], 
+
+        resultContours = pyClipper.clipExecute([inputContour.originalFlat for inputContour in inputContours],
+                                               [],
                                                "union", subjectFillType="noneZero", clipFillType="noneZero")
 
         resultFlatPoints = set()
         for contour in resultContours:
             resultFlatPoints.update(contour)
-        
+
         intersections = resultFlatPoints - inputFlatPoints
         return _scalePoints(intersections, inverseClipperScale)
-
-
-    

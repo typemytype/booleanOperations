@@ -1,10 +1,7 @@
 from __future__ import print_function, division, absolute_import
 import math
-from fontTools.pens.basePen import BasePen
 from fontTools.misc import bezierTools
 from fontTools.pens.basePen import decomposeQuadraticSegment
-from robofab.pens.reverseContourPointPen import ReverseContourPointPen
-from robofab.pens.adapterPens import PointToSegmentPen
 
 """
 To Do:
@@ -54,6 +51,7 @@ inverseClipperScale = 1.0 / clipperScale
 
 # approximateSegmentLength setting
 _approximateSegmentLength = 5.3
+
 
 # -------------
 # Input Objects
@@ -138,7 +136,7 @@ class InputContour(object):
 
 class InputSegment(object):
 
-    #__slots__ = ["points", "previousOnCurve", "scaledPreviousOnCurve", "flat", "used"]
+    # __slots__ = ["points", "previousOnCurve", "scaledPreviousOnCurve", "flat", "used"]
 
     def __init__(self, points=None, previousOnCurve=None, willBeReversed=False):
         if points is None:
@@ -285,10 +283,11 @@ class InputPoint(object):
         return copy
 
     def __str__(self):
-        return "%s %s" % (self.segmentType , self.coordinates)
+        return "%s %s" % (self.segmentType, self.coordinates)
 
     def __repr__(self):
         return self.__str__()
+
 
 # -------------
 # Input Support
@@ -352,6 +351,7 @@ class ContourPointDataPen:
     def addComponent(self, baseGlyphName, transformation):
         raise NotImplementedError
 
+
 def _prepPointsForSegments(points):
     """
     Move any off curves at the end of the contour
@@ -368,12 +368,14 @@ def _prepPointsForSegments(points):
             continue
         break
 
+
 def _copyPoints(points):
     """
     Make a shallow copy of the points.
     """
     copied = [point.copy() for point in points]
     return copied
+
 
 def _reversePoints(points):
     """
@@ -407,6 +409,7 @@ def _reversePoints(points):
     _prepPointsForSegments(final)
     # done
     return final
+
 
 def _convertPointsToSegments(points, willBeReversed=False):
     """
@@ -755,8 +758,8 @@ class OutputContour(object):
                 if not segmentedFlatPoints[-1]:
                     segmentedFlatPoints.pop(-1)
                 if len(segmentedFlatPoints) > 1 and len(segmentedFlatPoints[0]) == 1:
-                    ## if last segment is a curve, the start point may be last point on the last segment. If so, merge them.
-                    ## check if they both have the same inputSegment or reversedInputSegment
+                    # if last segment is a curve, the start point may be last point on the last segment. If so, merge them.
+                    # check if they both have the same inputSegment or reversedInputSegment
                     fp = segmentedFlatPoints[0][0]
                     lp = segmentedFlatPoints[-1][-1]
                     mergeFirstSegments = False
@@ -768,7 +771,7 @@ class OutputContour(object):
                         if (firstInputSegment.segmentType == reversedFirstInputSegment.segmentType == "curve") or (lastInputSegment.segmentType == reversedLastInputSegment.segmentType == "curve"):
                             if firstInputSegment == lastInputSegment or reversedFirstInputSegment == reversedLastInputSegment:
                                 mergeFirstSegments = True
-                            #elif len(firstInputSegment.points) > 1 and len(lastInputSegment.points) > 1:
+                            # elif len(firstInputSegment.points) > 1 and len(lastInputSegment.points) > 1:
                             elif fp == lastInputSegment.scaledPreviousOnCurve:
                                 mergeFirstSegments = True
                             elif lp == firstInputSegment.scaledPreviousOnCurve:
@@ -781,7 +784,7 @@ class OutputContour(object):
                         # Merge last segment with first segment if the distance between the last point and the first
                         # point is less than the step distance between the last two points. _approximateSegmentLength
                         # can be significantly smaller than this step size.
-                        if len(segmentedFlatPoints[-1])  > 1:
+                        if len(segmentedFlatPoints[-1]) > 1:
                             f1 = segmentedFlatPoints[-1][-2]
                             f2 = segmentedFlatPoints[-1][-1]
                             stepLen = _distance(f1, f2)
@@ -856,14 +859,14 @@ class OutputContour(object):
                         if inputSegment.segmentType == "curve":
                             canDoFastLine = False
                     if (len(flatSegment) == 1 or inputSegment is None) and canDoFastLine:
-                        #p = flatSegment[0]
+                        # p = flatSegment[0]
                         for p in flatSegment:
                             previousIntersectionPoint = self._scalePoint(p)
                             pointInfo = dict()
                             kwargs = dict()
                             if p in flatInputPointsSegmentDict:
                                 lineSegment = flatInputPointsSegmentDict[p]
-                                segmentPoint =  lineSegment.points[-1]
+                                segmentPoint = lineSegment.points[-1]
                                 pointInfo["smooth"] = segmentPoint.smooth
                                 pointInfo["name"] = segmentPoint.name
                                 kwargs.update(segmentPoint.kwargs)
@@ -873,7 +876,7 @@ class OutputContour(object):
                     lastPointWithAttributes = None
                     if flatSegment[0] == inputSegment.flat[0] and flatSegment[-1] != inputSegment.flat[-1]:
                         # needed the first part of the segment
-                        #if previousIntersectionPoint is None:
+                        # if previousIntersectionPoint is None:
                         #    previousIntersectionPoint = self._scalePoint(flatSegment[-1])
                         searchPoint = self._scalePoint(flatSegment[-1])
                         tValues = inputSegment.tValueForPoint(searchPoint)
@@ -1004,7 +1007,8 @@ class OutputSegment(object):
         self.final = final
 
 
-class OutputPoint(InputPoint): pass
+class OutputPoint(InputPoint):
+    pass
 
 
 # -------------
@@ -1024,6 +1028,7 @@ def _getClockwise(points):
     # get the area
     area = sum([x0 * y1 - x1 * y0 for ((x0, y0), (x1, y1)) in segments])
     return area <= 0
+
 
 # ----------
 # Misc. Math
@@ -1053,6 +1058,7 @@ def _tValueForPointOnCubicCurve(point, cubicCurve, isHorizontal=0):
         solutions = [intersectionLenghts[minDist]]
     return solutions
 
+
 def _tValueForPointOnQuadCurve(point, pts, isHorizontal=0):
     quadSegments = decomposeQuadraticSegment(pts[1:])
     previousOnCurve = pts[0]
@@ -1077,11 +1083,13 @@ def _tValueForPointOnQuadCurve(point, pts, isHorizontal=0):
         solutions = [intersectionLenghts[minDist]]
     return solutions
 
+
 def _tValueForPointOnLine(point, line):
     pt1, pt2 = line
     dist = _distance(pt1, point)
     totalDist = _distance(pt1, pt2)
     return [dist / totalDist]
+
 
 def _scalePoints(points, scale=1, convertToInteger=True):
     """
@@ -1096,6 +1104,7 @@ def _scalePoints(points, scale=1, convertToInteger=True):
         points = [(x * scale, y * scale) for (x, y) in points]
     return points
 
+
 def _scaleSinglePoint(point, scale=1, convertToInteger=True):
     """
     Scale a single point
@@ -1106,8 +1115,10 @@ def _scaleSinglePoint(point, scale=1, convertToInteger=True):
     else:
         (x * scale, y * scale)
 
+
 def _intPoint(pt):
     return int(round(pt[0])), int(round(pt[1]))
+
 
 def _checkFlatPoints(points):
     _points = []
@@ -1125,10 +1136,12 @@ def _checkFlatPoints(points):
         _points[-1] = points[-1]
     return _points
 
+
 """
 The curve flattening code was forked and modified from RoboFab's FilterPen.
 That code was written by Erik van Blokland.
 """
+
 
 def _flattenSegment(segment, approximateSegmentLength=_approximateSegmentLength):
     """
@@ -1160,11 +1173,14 @@ def _flattenSegment(segment, approximateSegmentLength=_approximateSegmentLength)
     flat.append(onCurve2)
     return flat
 
+
 def _distance(pt1, pt2):
     return math.sqrt((pt1[0] - pt2[0]) ** 2 + (pt1[1] - pt2[1]) ** 2)
 
+
 def _pointOnLine(pt1, pt2, a):
     return abs(_distance(pt1, a) + _distance(a, pt2) - _distance(pt1, pt2)) < epsilon
+
 
 def _estimateCubicCurveLength(pt0, pt1, pt2, pt3, precision=10):
     """
@@ -1183,6 +1199,7 @@ def _estimateCubicCurveLength(pt0, pt1, pt2, pt3, precision=10):
         length += _distance(pta, ptb)
     return length
 
+
 def _mid(pt1, pt2):
     """
     (Point, Point) -> Point
@@ -1190,6 +1207,7 @@ def _mid(pt1, pt2):
     """
     (x0, y0), (x1, y1) = pt1, pt2
     return 0.5 * (x0 + x1), 0.5 * (y0 + y1)
+
 
 def _getCubicPoint(t, pt0, pt1, pt2, pt3):
     if t == 0:
@@ -1215,6 +1233,7 @@ def _getCubicPoint(t, pt0, pt1, pt2, pt3):
         x = ax * t3 + bx * t2 + cx * t + pt0[0]
         y = ay * t3 + by * t2 + cy * t + pt0[1]
         return x, y
+
 
 def _getQuadPoint(t, pt0, pt1, pt2):
     if t == 0:
