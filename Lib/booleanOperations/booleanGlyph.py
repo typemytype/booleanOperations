@@ -20,6 +20,7 @@ class BooleanGlyphDataPointPen(AbstractPointPen):
     def _flushContour(self):
         points = self._points
         if len(points) == 1 and points[0][0] == "move":
+            segmentType, pt, smooth, name = points[0]
             self._glyph.anchors.append((pt, name))
         elif self.copyContourData:
             contour = self._glyph.contourClass()
