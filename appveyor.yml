@@ -48,8 +48,8 @@ install:
   # upgrade pip to avoid out-of-date warnings
   - "pip install --disable-pip-version-check --user --upgrade pip"
 
-  # install wheel and Cython to build compiled packages
-  - "pip install --upgrade wheel cython"
+  # install/upgrade setuptools, wheel and Cython to build compiled packages
+  - "pip install --upgrade setuptools wheel cython"
 
 build: false
 

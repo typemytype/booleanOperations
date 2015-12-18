@@ -33,17 +33,15 @@ If the wheel isn't available, pip will attempt to compile the package from the s
 Build
 -----
 
-The included `setup.py` file operates in one of two modes depending on the presence/absence of an empty file named `dev` in the project root directory.
+The extension module is generated using [Cython](http://cython.org/). 
 
-When the file is present, as in the Github repository, then [Cython](http://cython.org/) is required in order to convert the `.pyx` files to `.cpp`.
+The source distributions already contain a pre-generated `pyClipper.cpp` file, thus only a C++ compiler is required to build the extension module.
 
-In the source distributions this 'dev' file is missing, and pre-generated `.cpp` files are present instead.
+Since this file is not stored in the git repository, if you want to build from a cloned repository, you will also need Cython in order to generate the `.cpp` source file.
 
-This mechanism allows source distributions to be installed on systems which don't have Cython, or have a different versions (the idea comes from <https://github.com/MattShannon/bandmat>).
+The `setup.py` script will automatically fetch and install Cython locally (to a temporary "./.eggs" folder) if Cython is not already installed and the pre-generated C++ file is absent.
 
-In both cases a C++ compiler is needed to build the Python extension module.
-
-For example, to compile it in the same location as the Python sources:
+To compile the module in the same location as the Python sources:
 
 ```
 python setup.py build_ext --inplace
