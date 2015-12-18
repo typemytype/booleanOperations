@@ -170,10 +170,9 @@ class BooleanGlyph(object):
         return SegmentToPointPen(self.getPointPen())
 
     def getPointPen(self):
-        from defcon.pens.glyphObjectPointPen import GlyphObjectPointPen
         return BooleanGlyphDataPointPen(self)
 
-    ## boolean operations
+    # boolean operations
 
     def _booleanMath(self, operation, other):
         if not isinstance(other, self.__class__):
@@ -226,4 +225,3 @@ class BooleanGlyph(object):
 
     def removeOverlap(self):
         return self._booleanMath("union", None)
-
