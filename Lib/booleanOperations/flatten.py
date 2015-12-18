@@ -1153,7 +1153,9 @@ def _flattenSegment(segment, approximateSegmentLength=_approximateSegmentLength)
     t = step
     while t < 1:
         pt = _getCubicPoint(t, onCurve1, offCurve1, offCurve2, onCurve2)
-        flat.append(pt)
+        # ignore when point is in the same direction as the on - off curve line
+        if not _pointOnLine(offCurve2, onCurve2, pt) and not _pointOnLine(onCurve1, offCurve1, pt):
+            flat.append(pt)
         t += step
     flat.append(onCurve2)
     return flat
