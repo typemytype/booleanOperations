@@ -33,13 +33,17 @@ If the wheel isn't available, pip will attempt to compile the package from the s
 Build
 -----
 
-The extension module is generated using [Cython](http://cython.org/). 
+The extension module is generated using [Cython](http://cython.org/) (version 0.23.4).
 
 The source distributions already contain a pre-generated `pyClipper.cpp` file, thus only a C++ compiler is required to build the extension module.
 
 Since this file is not stored in the git repository, if you want to build from a cloned repository, you will also need Cython in order to generate the `.cpp` source file.
 
-The `setup.py` script will automatically fetch and install Cython locally (to a temporary "./.eggs" folder) if Cython is not already installed and the pre-generated C++ file is absent.
+Only with later versions of setuptools (>= 18.0), the `setup.py` script can automatically fetch and install Cython locally (to a temporary "./.eggs" folder).
+
+If you wish to upgrade setuptools, you can use either `easy_install -U setuptools` or `pip install -U setuptools` (prepended with `sudo` depending on your environment; `-U` means "upgrade").
+
+Alternatively, you may simply install or upgrade Cython before you attempt to build booleanOperations, by doing `pip install -U cython`.
 
 To compile the module in the same location as the Python sources:
 
