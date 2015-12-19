@@ -65,12 +65,12 @@ artifacts:
   - path: dist\*.zip
   - path: dist\*.tar.gz
 
-# deploy:
-#   - provider: GitHub
-#     auth_token:
-#       secure: <place your GitHub API token here>
-#     artifact:
-#     draft: false
-#     prerelease: false
-#     on:
-#       appveyor_repo_tag: true
+deploy:
+  - provider: GitHub
+    auth_token:
+      secure: Ye5oDcla8MqxYZbTSxcrZZjGLq/tO1CfF4NcEvbCOdGCkeoRfc4heGXIRXROl3dw
+    artifact:
+    draft: false
+    prerelease: false
+    on:
+      appveyor_repo_tag: true
