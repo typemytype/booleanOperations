@@ -26,7 +26,7 @@ pip install --find-links https://github.com/typemytype/booleanOperations/release
 
 Pip will first try to download the Python [wheel](http://pythonwheels.com/) archive that was compiled for your platform and Python version.
 
-Wheels are available for **OS X** (`intel`) and **Windows** (`win32`) platforms, for Python **2.7**, **3.4** and **3.5**.
+Wheels are available for **OS X** (`intel`) and **Windows** (`win32` and `amd64`) platforms, for Python **2.7**, **3.4** and **3.5**.
 
 If the wheel isn't available, pip will attempt to compile the package from the source distribution (`.tar.gz` or `.zip`).
 
