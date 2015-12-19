@@ -2,6 +2,8 @@ from __future__ import print_function
 import sys
 import os
 
+__version__ = "0.2"
+
 try:
     import pkg_resources
 except ImportError:
@@ -36,7 +38,7 @@ if not os.path.exists("cppWrapper/pyClipper.cpp"):
                 Cython >= 0.23.4 is required, and the dependency cannot be
                 automatically resolved with the version of setuptools that is
                 currently installed (%s).
-                
+
                 You can install/upgrade Cython using pip:
                 $ pip install -U cython
 
@@ -83,7 +85,7 @@ ext_module = Extension(
 
 setup(
     name="booleanOperations",
-    version="0.2",
+    version=__version__,
     description="Boolean operations on paths.",
     author="Frederik Berlaen",
     author_email="frederik@typemytype.com",
