@@ -1,44 +1,55 @@
-# We require setuptools >= 18.0 so that we can resolve Cython dependency via
-# 'setup_requires':
-# https://bitbucket.org/pypa/setuptools/commits/424966904023#chg-CHANGES.txt
+from __future__ import print_function
+import sys
+import os
 
-no_setuptools_msg = ('Setuptools >= 18.0 is required.\n'
-                     'Get it from: https://pypi.python.org/pypi/setuptools')
 try:
     import pkg_resources
 except ImportError:
-    print(no_setuptools_msg)
+    print("Setuptools is required.\n"
+          "Get it from: https://pypi.python.org/pypi/setuptools")
     exit(1)
 
-try:
-    pkg_resources.require("setuptools >= 18.0")
-except pkg_resources.ResolutionError:
-    print(no_setuptools_msg)
-    exit(1)
 
-from setuptools import setup, Extension
-import os
+def is_installed(requirement):
+    try:
+        pkg_resources.require(requirement)
+    except pkg_resources.ResolutionError:
+        return False
+    else:
+        return True
 
 # this is the latest version available from PyPI as of 18 December 2015
-cython = 'cython >= 0.23.4'
+cython_req = 'cython >= 0.23.4'
 
-# If the Cython-generated files are absent, add Cython to 'setup_requires'
+# Resolving Cython dependency via 'setup_requires' requires setuptools >= 18.0:
+# https://bitbucket.org/pypa/setuptools/commits/424966904023#chg-CHANGES.txt
+setuptools_req = "setuptools >= 18.0"
+
+requirements = []
+# If the Cython-generated files are absent, and the required Cython isn't
+# installed, add Cython to 'setup_requires'.
 if not os.path.exists("cppWrapper/pyClipper.cpp"):
-    requirements = [cython]
-    cython_is_required = True
-else:
-    requirements = []
-    cython_is_required = False
+    if not is_installed(cython_req):
+        if not is_installed(setuptools_req):
+            import textwrap
+            print(textwrap.dedent("""
+                Cython >= 0.23.4 is required, and the dependency cannot be
+                automatically resolved with the version of setuptools that is
+                currently installed (%s).
+                
+                You can install/upgrade Cython using pip:
+                $ pip install -U cython
 
-# check if the required Cython version is already installed on the system
-try:
-    pkg_resources.require(cython)
-except pkg_resources.ResolutionError:
-    cython_is_installed = False
-else:
-    cython_is_installed = True
+                Alternatively, you can upgrade setuptools:
+                $ pip install -U setuptools
+                """ % pkg_resources.get_distribution("setuptools").version),
+                file=sys.stderr)
+            exit(1)
+        requirements.append(cython_req)
 
-if cython_is_installed or cython_is_required:
+from setuptools import setup, Extension
+
+if is_installed(cython_req) or cython_req in requirements:
     print('Development mode: Compiling Cython modules from .pyx sources.')
     sources = ["cppWrapper/pyClipper.pyx"]
 
@@ -50,11 +61,13 @@ if cython_is_installed or cython_is_required:
         """
         def run(self):
             from Cython.Build import cythonize
-            cythonize([s for s in sources if s.endswith('.pyx')],
-                      language='c++')
+            cythonize(sources, language='c++')
             _sdist.run(self)
 
     cmdclass = {'sdist': sdist}
+    if is_installed(cython_req):
+        from Cython.Distutils import build_ext
+        cmdclass['build_ext'] = build_ext
 
 else:
     print('Distribution mode: Compiling from Cython-generated .cpp sources.')
