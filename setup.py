@@ -1,8 +1,14 @@
 from __future__ import print_function
 import sys
 import os
+import re
 
-__version__ = "0.2"
+version = ''
+with open('Lib/booleanOperations/__init__.py', 'r') as fd:
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
+if not version:
+    raise RuntimeError('Cannot find version information')
 
 try:
     import pkg_resources
@@ -85,7 +91,7 @@ ext_module = Extension(
 
 setup(
     name="booleanOperations",
-    version=__version__,
+    version=version,
     description="Boolean operations on paths.",
     author="Frederik Berlaen",
     author_email="frederik@typemytype.com",
