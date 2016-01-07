@@ -3,11 +3,14 @@ import weakref
 from copy import deepcopy
 
 try:
-    from ufoLib.pointPen import (
-        AbstractPointPen, PointToSegmentPen, SegmentToPointPen)
-except:
     from robofab.pens.pointPen import AbstractPointPen
     from robofab.pens.adapterPens import PointToSegmentPen, SegmentToPointPen
+    from robofab.pens.boundsPen import BoundsPen
+except:
+    from ufoLib.pointPen import (
+        AbstractPointPen, PointToSegmentPen, SegmentToPointPen)
+    from fontTools.pens.boundsPen import BoundsPen
+
 from defcon.pens.clockwiseTestPointPen import ClockwiseTestPointPen
 
 from .booleanOperationManager import BooleanOperationManager
@@ -82,7 +85,6 @@ class BooleanContour(object):
 
     def _get_bounds(self):
         if self._bounds is None:
-            from fontTools.pens.boundsPen import BoundsPen
             pen = BoundsPen(None)
             self.draw(pen)
             self._bounds = pen.bounds
