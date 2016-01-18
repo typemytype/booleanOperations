@@ -2,7 +2,15 @@ from __future__ import print_function, division, absolute_import
 import weakref
 from copy import deepcopy
 
-from robofab.pens.pointPen import AbstractPointPen
+try:
+    from robofab.pens.pointPen import AbstractPointPen
+    from robofab.pens.adapterPens import PointToSegmentPen, SegmentToPointPen
+    from robofab.pens.boundsPen import BoundsPen
+except:
+    from ufoLib.pointPen import (
+        AbstractPointPen, PointToSegmentPen, SegmentToPointPen)
+    from fontTools.pens.boundsPen import BoundsPen
+
 from defcon.pens.clockwiseTestPointPen import ClockwiseTestPointPen
 
 from .booleanOperationManager import BooleanOperationManager
@@ -57,7 +65,6 @@ class BooleanContour(object):
     # shallow contour API
 
     def draw(self, pen):
-        from robofab.pens.adapterPens import PointToSegmentPen
         pointPen = PointToSegmentPen(pen)
         self.drawPoints(pointPen)
 
@@ -78,7 +85,6 @@ class BooleanContour(object):
 
     def _get_bounds(self):
         if self._bounds is None:
-            from robofab.pens.boundsPen import BoundsPen
             pen = BoundsPen(None)
             self.draw(pen)
             self._bounds = pen.bounds
@@ -152,7 +158,6 @@ class BooleanGlyph(object):
     # shalllow glyph API
 
     def draw(self, pen):
-        from robofab.pens.adapterPens import PointToSegmentPen
         pointPen = PointToSegmentPen(pen)
         self.drawPoints(pointPen)
 
@@ -167,7 +172,6 @@ class BooleanGlyph(object):
             pointPen.endPath()
 
     def getPen(self):
-        from robofab.pens.adapterPens import SegmentToPointPen
         return SegmentToPointPen(self.getPointPen())
 
     def getPointPen(self):
