@@ -46,7 +46,7 @@ test cases:
 epsilon = 1e-8
 
 # factors for transferring coordinates to and from Clipper
-clipperScale = 100000
+clipperScale = 1 << 17
 inverseClipperScale = 1.0 / clipperScale
 
 # approximateSegmentLength setting
