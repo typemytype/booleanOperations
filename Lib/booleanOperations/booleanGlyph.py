@@ -24,13 +24,26 @@ class BooleanGlyphDataPointPen(AbstractPointPen):
         self._glyph = glyph
         self._points = []
         self.copyContourData = True
+        self.ignoreOpenPaths = False
 
     def _flushContour(self):
         points = self._points
         if len(points) == 1 and points[0][0] == "move":
+            # it's an anchor
             segmentType, pt, smooth, name = points[0]
             self._glyph.anchors.append((pt, name))
         elif self.copyContourData:
+            if points[0][0] == "move":
+                if self.ignoreOpenPaths:
+                    # ignore open path
+                    return
+                # remove trailing off curves in an open path
+                while points[-1][0] is None:
+                    points.pop()
+                # close the contour
+                segmentType, pt, smooth, name = points[0]
+                points[0] = "line", pt, smooth, name
+
             contour = self._glyph.contourClass()
             contour._points = points
             self._glyph.contours.append(contour)
@@ -118,7 +131,7 @@ class BooleanGlyph(object):
 
     contourClass = BooleanContour
 
-    def __init__(self, glyph=None, copyContourData=True):
+    def __init__(self, glyph=None, copyContourData=True, ignoreOpenPaths=False):
         self.contours = []
         self.components = []
         self.anchors = []
@@ -132,6 +145,7 @@ class BooleanGlyph(object):
         if glyph:
             pen = self.getPointPen()
             pen.copyContourData = copyContourData
+            pen.ignoreOpenPaths = ignoreOpenPaths
             glyph.drawPoints(pen)
 
             self.name = glyph.name
