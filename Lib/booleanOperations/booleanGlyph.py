@@ -147,7 +147,7 @@ class BooleanGlyph(object):
             pen.copyContourData = copyContourData
             pen.ignoreOpenPaths = ignoreOpenPaths
             glyph.drawPoints(pen)
-
+            self.cleanup()
             self.name = glyph.name
             self.unicodes = glyph.unicodes
             self.width = glyph.width
@@ -169,7 +169,23 @@ class BooleanGlyph(object):
     def getSourceGlyph(self):
         return None
 
-    # shalllow glyph API
+    def cleanup(self):
+        # Need to do clean up as soon as paths are created,
+        # so that if the user compares paths before and
+        # and after a math operation, these changes will not cause a difference.
+        # For the moment,  only remove unnecessary initial 'move' points; these can be
+        # created by Robofont, and otherwise trigger an assert in flatten.py:ContourPointDataPen.getData.
+        for contour in self.contours:
+            segmentType1, pt1, smooth1, name1 = contour._points[0]
+            segmentType2, pt2, smooth2, name2 = contour._points[-1]
+            if segmentType1 is not None and segmentType2 is not None:
+                if pt1 == pt2:
+                    if (segmentType1 in ["line", "move"]):
+                        del contour._points[0]
+                    else:
+                        raise AssertionError("Unhandled point type sequence")
+            
+    ## shallow glyph API
 
     def draw(self, pen):
         pointPen = PointToSegmentPen(pen)
