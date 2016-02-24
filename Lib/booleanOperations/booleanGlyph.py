@@ -24,7 +24,6 @@ class BooleanGlyphDataPointPen(AbstractPointPen):
         self._glyph = glyph
         self._points = []
         self.copyContourData = True
-        self.ignoreOpenPaths = False
 
     def _flushContour(self):
         points = self._points
@@ -33,16 +32,15 @@ class BooleanGlyphDataPointPen(AbstractPointPen):
             segmentType, pt, smooth, name = points[0]
             self._glyph.anchors.append((pt, name))
         elif self.copyContourData:
-            if points[0][0] == "move":
-                if self.ignoreOpenPaths:
-                    # ignore open path
-                    return
-                # remove trailing off curves in an open path
-                while points[-1][0] is None:
-                    points.pop()
-                # close the contour
-                segmentType, pt, smooth, name = points[0]
-                points[0] = "line", pt, smooth, name
+            # ignore double points on start and end
+            firstPoint = points[0]
+            lastPoint = points[-1]
+            if firstPoint[0] is not None and lastPoint[0] is not None:
+                if firstPoint[1] == lastPoint[1]:
+                    if firstPoint[0] in ("line", "move"):
+                        del points[0]
+                    else:
+                        raise AssertionError("Unhandled point type sequence")
 
             contour = self._glyph.contourClass()
             contour._points = points
@@ -131,7 +129,7 @@ class BooleanGlyph(object):
 
     contourClass = BooleanContour
 
-    def __init__(self, glyph=None, copyContourData=True, ignoreOpenPaths=False):
+    def __init__(self, glyph=None, copyContourData=True):
         self.contours = []
         self.components = []
         self.anchors = []
@@ -145,7 +143,6 @@ class BooleanGlyph(object):
         if glyph:
             pen = self.getPointPen()
             pen.copyContourData = copyContourData
-            pen.ignoreOpenPaths = ignoreOpenPaths
             glyph.drawPoints(pen)
 
             self.name = glyph.name
@@ -167,6 +164,12 @@ class BooleanGlyph(object):
         return self.contours[index]
 
     def getSourceGlyph(self):
+        return None
+
+    def getParent(self):
+        source = self.getSourceGlyph()
+        if source:
+            return source.getParent()
         return None
 
     # shalllow glyph API
