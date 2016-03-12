@@ -34,6 +34,10 @@ class BooleanGlyphDataPointPen(AbstractPointPen):
         elif self.copyContourData:
             # ignore double points on start and end
             firstPoint = points[0]
+            if firstPoint[0] == "move":
+                # remove trailing off curves in an open path
+                while points[-1][0] is None:
+                    points.pop()
             lastPoint = points[-1]
             if firstPoint[0] is not None and lastPoint[0] is not None:
                 if firstPoint[1] == lastPoint[1]:
@@ -41,6 +45,10 @@ class BooleanGlyphDataPointPen(AbstractPointPen):
                         del points[0]
                     else:
                         raise AssertionError("Unhandled point type sequence")
+                elif firstPoint[0] == "move":
+                    # auto close the path
+                    _, pt, smooth, name = firstPoint
+                    points[0] = "line", pt, smooth, name
 
             contour = self._glyph.contourClass()
             contour._points = points
