@@ -15,7 +15,7 @@ try:
 except ImportError:
     print("Setuptools is required.\n"
           "Get it from: https://pypi.python.org/pypi/setuptools")
-    exit(1)
+    sys.exit(1)
 
 
 def is_installed(requirement):
@@ -52,7 +52,7 @@ if not os.path.exists("cppWrapper/pyClipper.cpp"):
                 $ pip install -U setuptools
                 """ % pkg_resources.get_distribution("setuptools").version),
                 file=sys.stderr)
-            exit(1)
+            sys.exit(1)
         requirements.append(cython_req)
 
 from setuptools import setup, Extension
