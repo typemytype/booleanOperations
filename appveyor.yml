@@ -46,7 +46,7 @@ install:
   - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
 
   # upgrade pip to avoid out-of-date warnings
-  - "pip install --disable-pip-version-check --upgrade pip"
+  - "pip install --disable-pip-version-check --user --upgrade pip"
 
   # install/upgrade setuptools, wheel and Cython to build compiled packages
   - "pip install --upgrade setuptools wheel"
