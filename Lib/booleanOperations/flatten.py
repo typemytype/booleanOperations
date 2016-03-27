@@ -455,7 +455,7 @@ class OutputContour(object):
     def __init__(self, pointList):
         if pointList[0] == pointList[-1]:
             del pointList[-1]
-        self.clockwise = _getClockwise(pointList)
+        self.clockwise = not pyclipper.Orientation(pointList)
         self.segments = [
             OutputSegment(
                 segmentType="flat",
@@ -1013,25 +1013,6 @@ class OutputSegment(object):
 
 class OutputPoint(InputPoint):
     pass
-
-
-# -------------
-# Ouput Support
-# -------------
-
-def _getClockwise(points):
-    """
-    Very quickly get the direction for points.
-    This only works for contours that *do not*
-    self-intersect. It works by finding the area
-    of the polygon. positive is counter-clockwise,
-    negative is clockwise.
-    """
-    # quickly make segments
-    segments = zip(points, points[1:] + [points[0]])
-    # get the area
-    area = sum([x0 * y1 - x1 * y0 for ((x0, y0), (x1, y1)) in segments])
-    return area <= 0
 
 
 # ----------
