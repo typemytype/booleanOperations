@@ -1113,7 +1113,7 @@ def _scaleSinglePoint(point, scale=1, convertToInteger=True):
     if convertToInteger:
         return int(round(x * scale)), int(round(y * scale))
     else:
-        (x * scale, y * scale)
+        return (x * scale, y * scale)
 
 
 def _intPoint(pt):
