@@ -2,6 +2,7 @@ from __future__ import print_function, division, absolute_import
 import math
 from fontTools.misc import bezierTools
 from fontTools.pens.basePen import decomposeQuadraticSegment
+import pyclipper
 
 """
 To Do:
@@ -79,8 +80,8 @@ class InputContour(object):
             otherSegment = self.reversedSegments[index]
             otherSegment.flat = segment.getReversedFlatPoints()
             index -= 1
-        # get the direction
-        self.clockwise = contour.clockwise
+        # get the direction; returns True if counter-clockwise, False otherwise
+        self.clockwise = not pyclipper.Orientation(points)
         # store the gathered data
         if self.clockwise:
             self.clockwiseSegments = self.segments
@@ -271,6 +272,9 @@ class InputPoint(object):
         self.smooth = smooth
         self.name = name
         self.kwargs = kwargs
+
+    def __getitem__(self, i):
+        return self.coordinates[i]
 
     def copy(self):
         copy = self.__class__(
