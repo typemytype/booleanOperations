@@ -1,6 +1,6 @@
 from __future__ import print_function, division, absolute_import
 from .flatten import InputContour, OutputContour
-from . import pyClipper
+import pyclipper
 
 
 """
@@ -13,15 +13,44 @@ General Suggestions:
 """
 
 
+_operationMap = {
+    "union": pyclipper.CT_UNION,
+    "intersection": pyclipper.CT_INTERSECTION,
+    "difference": pyclipper.CT_DIFFERENCE,
+    "xor": pyclipper.CT_XOR,
+}
+
+_fillTypeMap = {
+    "evenOdd": pyclipper.PFT_EVENODD,
+    # XXX actually, this should be spelled 'nonZero'
+    "noneZero": pyclipper.PFT_NONZERO,
+}
+
+
+def clipExecute(subjectContours, clipContours, operation, subjectFillType="noneZero",
+                clipFillType="noneZero"):
+    pc = pyclipper.Pyclipper()
+
+    if subjectContours:
+        pc.AddPaths(subjectContours, pyclipper.PT_SUBJECT)
+    if clipContours:
+        pc.AddPaths(clipContours, pyclipper.PT_CLIP)
+
+    solution = pc.Execute(_operationMap[operation], _fillTypeMap[subjectFillType],
+                          _fillTypeMap[clipFillType])
+
+    return [[tuple(p) for p in path] for path in solution]
+
+
 def _performOperation(operation, subjectContours, clipContours, outPen):
     # prep the contours
     subjectInputContours = [InputContour(contour) for contour in subjectContours if contour and len(contour) > 1]
     clipInputContours = [InputContour(contour) for contour in clipContours if contour and len(contour) > 1]
     inputContours = subjectInputContours + clipInputContours
 
-    resultContours = pyClipper.clipExecute([subjectInputContour.originalFlat for subjectInputContour in subjectInputContours],
-                                           [clipInputContour.originalFlat for clipInputContour in clipInputContours],
-                                           operation, subjectFillType="noneZero", clipFillType="noneZero")
+    resultContours = clipExecute([subjectInputContour.originalFlat for subjectInputContour in subjectInputContours],
+                                 [clipInputContour.originalFlat for clipInputContour in clipInputContours],
+                                 operation, subjectFillType="noneZero", clipFillType="noneZero")
     # convert to output contours
     outputContours = [OutputContour(contour) for contour in resultContours]
     # re-curve entire contour
@@ -79,9 +108,9 @@ class BooleanOperationManager(object):
         for contour in inputContours:
             inputFlatPoints.update(contour.originalFlat)
 
-        resultContours = pyClipper.clipExecute([inputContour.originalFlat for inputContour in inputContours],
-                                               [],
-                                               "union", subjectFillType="noneZero", clipFillType="noneZero")
+        resultContours = clipExecute(
+            [inputContour.originalFlat for inputContour in inputContours], [],
+            "union", subjectFillType="noneZero", clipFillType="noneZero")
 
         resultFlatPoints = set()
         for contour in resultContours:
