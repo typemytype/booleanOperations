@@ -170,7 +170,7 @@ class InputSegment(object):
             flat = []
             currentOnCurve = previousOnCurve
             pointCoordinates = [point.coordinates for point in points]
-            for pt1, pt2 in decomposeQuadraticSegment(pointCoordinates[1:]):
+            for pt1, pt2 in decomposeQuadraticSegment(pointCoordinates):
                 pt0x, pt0y = currentOnCurve
                 pt1x, pt1y = pt1
                 pt2x, pt2y = pt2
@@ -234,7 +234,45 @@ class InputSegment(object):
             segments.append([pp, (x2, y2)])
             return segments
         elif self.segmentType == "qcurve":
-            raise NotImplementedError
+            points = [p.coordinates for p in self.points]
+            quadSegments = decomposeQuadraticSegment(points)
+
+            print("previousOnCurve =", self.previousOnCurve)
+            print("points =", points)
+            print("quadSegments = %s" % quadSegments)
+            print("tValues =", tValues)
+            fullSegments = []
+            p = self.previousOnCurve
+            for off, on in quadSegments:
+                fullSegments.append((p, off, on))
+                p = on
+
+            newOnCurves = []
+            for t, index in reversed(tValues):
+
+                if index == 0:
+                    on1 = self.previousOnCurve
+                else:
+                    on1 = quadSegments[index-1][-1]
+                off, on2 = quadSegments[index]
+                subSegments = bezierTools.splitQuadraticAtT(on1, off, on2, t)
+                print("subSegments =", subSegments)
+                fullSegments = fullSegments[:index] + subSegments + fullSegments[index+1:]
+
+                newOnCurves.append(subSegments[0][-1])
+
+            segments = [[self.previousOnCurve]]
+            for on1, off, on2 in fullSegments:
+                segments[-1].append(off)
+                if on2 in newOnCurves:
+                    segments[-1].append(on2)
+                    segments.append([on2])
+
+            segments[-1].append(on2)
+            print(tValues)
+            print(segments)
+            print()
+            return segments
         else:
             raise NotImplementedError
 
@@ -255,7 +293,9 @@ class InputSegment(object):
         elif self.segmentType == "line":
             return _tValueForPointOnLine(point, (self.previousOnCurve, self.points[0].coordinates))
         elif self.segmentType == "qcurve":
-            raise NotImplementedError
+            points = [p.coordinates for p in self.points]
+            points.insert(0, self.previousOnCurve)
+            return _tValueForPointOnQuadCurve(point, points)
         else:
             raise NotImplementedError
 
@@ -881,7 +921,7 @@ class OutputContour(object):
                         searchPoint = self._scalePoint(flatSegment[-1])
                         tValues = inputSegment.tValueForPoint(searchPoint)
                         curveNeeded = 0
-                        replacePointOnNewCurve = [(3, searchPoint)]
+                        replacePointOnNewCurve = [(-1, searchPoint)]
                         previousIntersectionPoint = searchPoint
                     elif flatSegment[-1] == inputSegment.flat[-1] and flatSegment[0] != inputSegment.flat[0]:
                         # needed the end of the segment
@@ -904,7 +944,7 @@ class OutputContour(object):
                         searchPoint = self._scalePoint(flatSegment[-1])
                         tValues.extend(inputSegment.tValueForPoint(searchPoint))
                         curveNeeded = 1
-                        replacePointOnNewCurve = [(0, previousIntersectionPoint), (3, searchPoint)]
+                        replacePointOnNewCurve = [(0, previousIntersectionPoint), (-1, searchPoint)]
                         previousIntersectionPoint = searchPoint
                     else:
                         # take the whole segments as is
@@ -1075,12 +1115,13 @@ def _tValueForPointOnQuadCurve(point, pts, isHorizontal=0):
         return _tValueForPointOnQuadCurve(point, pts, isHorizontal=1)
     if len(solutions) > 1:
         intersectionLenghts = {}
-        for t in solutions:
-            tp = solutionsDict[t]
+        for t, index in solutions:
+            tp = solutionsDict[(t, index)]
             dist = _distance(tp, point)
-            intersectionLenghts[dist] = t
+            intersectionLenghts[dist] = t, index
         minDist = min(intersectionLenghts.keys())
         solutions = [intersectionLenghts[minDist]]
+    # should solution be sorted by decomposed quad index?
     return solutions
 
 
