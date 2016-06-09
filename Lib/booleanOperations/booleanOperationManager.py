@@ -71,7 +71,7 @@ class BooleanOperationManager(object):
 
     @staticmethod
     def getIntersections(contours):
-        from flatten import _scalePoints, inverseClipperScale
+        from .flatten import _scalePoints, inverseClipperScale
         # prep the contours
         inputContours = [InputContour(contour) for contour in contours if contour and len(contour) > 1]
 
