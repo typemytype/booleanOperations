@@ -11,8 +11,7 @@ except:
         AbstractPointPen, PointToSegmentPen, SegmentToPointPen)
     from fontTools.pens.boundsPen import BoundsPen
 
-from defcon.pens.clockwiseTestPointPen import ClockwiseTestPointPen
-
+from fontTools.pens.areaPen import AreaPen
 from .booleanOperationManager import BooleanOperationManager
 
 manager = BooleanOperationManager()
@@ -95,9 +94,9 @@ class BooleanContour(object):
 
     def _get_clockwise(self):
         if self._clockwise is None:
-            pointPen = ClockwiseTestPointPen()
-            self.drawPoints(pointPen)
-            self._clockwise = pointPen.getIsClockwise()
+            pen = AreaPen()
+            self.draw(pen)
+            self._clockwise = pen.value < 0
         return self._clockwise
 
     clockwise = property(_get_clockwise)
