@@ -95,6 +95,7 @@ class BooleanContour(object):
     def _get_clockwise(self):
         if self._clockwise is None:
             pen = AreaPen()
+            pen.endPath = pen.closePath
             self.draw(pen)
             self._clockwise = pen.value < 0
         return self._clockwise
