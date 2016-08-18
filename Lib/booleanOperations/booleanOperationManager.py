@@ -22,13 +22,14 @@ _operationMap = {
 
 _fillTypeMap = {
     "evenOdd": pyclipper.PFT_EVENODD,
-    # XXX actually, this should be spelled 'nonZero'
+    "nonZero": pyclipper.PFT_NONZERO,
+    # we keep the misspelling for compatibility with earlier versions
     "noneZero": pyclipper.PFT_NONZERO,
 }
 
 
-def clipExecute(subjectContours, clipContours, operation, subjectFillType="noneZero",
-                clipFillType="noneZero"):
+def clipExecute(subjectContours, clipContours, operation, subjectFillType="nonZero",
+                clipFillType="nonZero"):
     pc = pyclipper.Pyclipper()
 
     if subjectContours:
@@ -50,7 +51,7 @@ def _performOperation(operation, subjectContours, clipContours, outPen):
 
     resultContours = clipExecute([subjectInputContour.originalFlat for subjectInputContour in subjectInputContours],
                                  [clipInputContour.originalFlat for clipInputContour in clipInputContours],
-                                 operation, subjectFillType="noneZero", clipFillType="noneZero")
+                                 operation, subjectFillType="nonZero", clipFillType="nonZero")
     # convert to output contours
     outputContours = [OutputContour(contour) for contour in resultContours]
     # re-curve entire contour
@@ -110,7 +111,7 @@ class BooleanOperationManager(object):
 
         resultContours = clipExecute(
             [inputContour.originalFlat for inputContour in inputContours], [],
-            "union", subjectFillType="noneZero", clipFillType="noneZero")
+            "union", subjectFillType="nonZero", clipFillType="nonZero")
 
         resultFlatPoints = set()
         for contour in resultContours:
