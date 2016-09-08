@@ -9,3 +9,5 @@ cppWrapper/pyClipper.cpp
 MANIFEST
 Lib/booleanOperations.egg-info
 .eggs
+
+.DS_Store
