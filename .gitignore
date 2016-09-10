@@ -4,8 +4,6 @@ dist
 build
 local
 
-cppWrapper/pyClipper.cpp
-*.so
 MANIFEST
 Lib/booleanOperations.egg-info
 .eggs

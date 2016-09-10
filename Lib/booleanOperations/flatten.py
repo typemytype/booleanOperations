@@ -2,6 +2,7 @@ from __future__ import print_function, division, absolute_import
 import math
 from fontTools.misc import bezierTools
 from fontTools.pens.basePen import decomposeQuadraticSegment
+import pyclipper
 
 """
 To Do:
@@ -79,8 +80,8 @@ class InputContour(object):
             otherSegment = self.reversedSegments[index]
             otherSegment.flat = segment.getReversedFlatPoints()
             index -= 1
-        # get the direction
-        self.clockwise = contour.clockwise
+        # get the direction; returns True if counter-clockwise, False otherwise
+        self.clockwise = not pyclipper.Orientation(points)
         # store the gathered data
         if self.clockwise:
             self.clockwiseSegments = self.segments
@@ -272,6 +273,9 @@ class InputPoint(object):
         self.name = name
         self.kwargs = kwargs
 
+    def __getitem__(self, i):
+        return self.coordinates[i]
+
     def copy(self):
         copy = self.__class__(
             coordinates=self.coordinates,
@@ -451,7 +455,7 @@ class OutputContour(object):
     def __init__(self, pointList):
         if pointList[0] == pointList[-1]:
             del pointList[-1]
-        self.clockwise = _getClockwise(pointList)
+        self.clockwise = not pyclipper.Orientation(pointList)
         self.segments = [
             OutputSegment(
                 segmentType="flat",
@@ -1011,25 +1015,6 @@ class OutputPoint(InputPoint):
     pass
 
 
-# -------------
-# Ouput Support
-# -------------
-
-def _getClockwise(points):
-    """
-    Very quickly get the direction for points.
-    This only works for contours that *do not*
-    self-intersect. It works by finding the area
-    of the polygon. positive is counter-clockwise,
-    negative is clockwise.
-    """
-    # quickly make segments
-    segments = zip(points, points[1:] + [points[0]])
-    # get the area
-    area = sum([x0 * y1 - x1 * y0 for ((x0, y0), (x1, y1)) in segments])
-    return area <= 0
-
-
 # ----------
 # Misc. Math
 # ----------
@@ -1113,7 +1098,7 @@ def _scaleSinglePoint(point, scale=1, convertToInteger=True):
     if convertToInteger:
         return int(round(x * scale)), int(round(y * scale))
     else:
-        (x * scale, y * scale)
+        return (x * scale, y * scale)
 
 
 def _intPoint(pt):

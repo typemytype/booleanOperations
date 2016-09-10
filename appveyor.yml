@@ -48,9 +48,8 @@ install:
   # upgrade pip to avoid out-of-date warnings
   - "pip install --disable-pip-version-check --user --upgrade pip"
 
-  # install/upgrade setuptools, wheel and Cython to build compiled packages
+  # install/upgrade setuptools and wheel to build packages
   - "pip install --upgrade setuptools wheel"
-  - "%WITH_COMPILER% pip install cython"
 
 build: false
 
@@ -58,13 +57,12 @@ test_script:
   - "%WITH_COMPILER% pip wheel -v -w dist ."
 
 after_test:
-  - "%WITH_COMPILER% python setup.py sdist --formats=gztar,zip"
+  - "%WITH_COMPILER% python setup.py sdist"
 
 artifacts:
   # archive the generated packages in the ci.appveyor.com build report
-  - path: dist\*.whl
-  - path: dist\*.zip
-  - path: dist\*.tar.gz
+  - path: dist\booleanOperations*.whl
+  - path: dist\booleanOperations*.zip
 
 deploy:
   - provider: GitHub
