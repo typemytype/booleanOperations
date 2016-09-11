@@ -1,0 +1,4 @@
+pyclipper>=1.0.5
+# replace these once the current fonttools and ufoLib are on PyPI
+https://github.com/behdad/fonttools/archive/7930106740f6f6f25583836c56c6cc593762e779.zip
+https://github.com/unified-font-object/ufoLib/archive/5a80482507e801ad4dcb46395593fb33b1e74d20.zip
