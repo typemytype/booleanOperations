@@ -3,52 +3,33 @@ BooleanOperations
 
 Boolean operations on paths based on a super fast [polygon clipper library by Angus Johnson](http://www.angusj.com/delphi/clipper.php).
 
-You can download the latest version from:
+You can download the latest version from PyPI:
 
-<https://github.com/typemytype/booleanOperations/releases/latest>.
+<https://pypi.org/project/booleanOperations>.
 
 Install
 -------
 
-[Pip](https://pip.pypa.io/en/stable/) is the recommended tool to download and install booleanOperations.
+[Pip](https://pip.pypa.io/en/stable/) is the recommended tool to install booleanOperations.
 
-If your Python doesn't come with pip pre-installed, you can install it by downloading the official [get-pip.py](https://bootstrap.pypa.io/get-pip.py), and running it as a normal script:
-
-```
-python get-pip.py
-```
-
-To install the booleanOperations package with pip, you do:
+To install the latest version:
 
 ```
-pip install --find-links https://github.com/typemytype/booleanOperations/releases/latest booleanOperations
+pip install booleanOperations
 ```
 
-Pip will first try to download the Python [wheel](http://pythonwheels.com/) archive that was compiled for your platform and Python version.
+BooleanOperations depends on the following packages:
+- [pyclipper](https://pypi.org/project/pyclipper/): Cython wrapper for the C++ Clipper library
+- [fonttools](github.com/behdad/fonttools)
+- [ufoLib](https://github.com/unified-font-object/ufoLib)
 
-Wheels are available for **OS X** (`intel`) and **Windows** (`win32` and `amd64`) platforms, for Python **2.7**, **3.4** and **3.5**.
+As of September 2016, only pyclipper is available on PyPI and therefore installed automatically with booleanOperations. The fonttools version 3.0 available from PyPI is too old, whereas ufoLib simply is not on PyPI yet, hence you need to install them separately.
 
-If the wheel isn't available, pip will attempt to compile the package from the source distribution (`.tar.gz` or `.zip`).
-
-Build
------
-
-The extension module is generated using [Cython](http://cython.org/) (version 0.23.4).
-
-The source distributions already contain a pre-generated `pyClipper.cpp` file, thus only a C++ compiler is required to build the extension module.
-
-Since this file is not stored in the git repository, if you want to build from a cloned repository, you will also need Cython in order to generate the `.cpp` source file.
-
-Only with later versions of setuptools (>= 18.0), the `setup.py` script can automatically fetch and install Cython locally (to a temporary "./.eggs" folder).
-
-If you wish to upgrade setuptools, you can use either `easy_install -U setuptools` or `pip install -U setuptools` (prepended with `sudo` depending on your environment; `-U` means "upgrade").
-
-Alternatively, you may simply install or upgrade Cython before you attempt to build booleanOperations, by doing `pip install -U cython`.
-
-To compile the module in the same location as the Python sources:
+You can use pip to install them from the respective git repositories:
 
 ```
-python setup.py build_ext --inplace
+pip install git+https://github.com/behdad/fonttools.git
+pip install git+https://github.com/unified-font-object/ufoLib.git
 ```
 
 BooleanOperationManager
