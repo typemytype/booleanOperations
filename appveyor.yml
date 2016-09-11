@@ -1,43 +1,45 @@
 environment:
-
-  global:
-    # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
-    # /E:ON and /V:ON options are not enabled in the batch script intepreter
-    # See: http://stackoverflow.com/a/13751649/163740
-    WITH_COMPILER: "cmd /E:ON /V:ON /C .\\appveyor\\run_with_compiler.cmd"
-
   matrix:
     - PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7.x"
       PYTHON_ARCH: "32"
+      TOXENV: "py27"
+      TOXPYTHON: "C:\\Python27\\python.exe"
 
     - PYTHON: "C:\\Python34"
       PYTHON_VERSION: "3.4.x"
       PYTHON_ARCH: "32"
+      TOXENV: "py34"
+      TOXPYTHON: "C:\\Python34\\python.exe"
 
     - PYTHON: "C:\\Python35"
       PYTHON_VERSION: "3.5.0"
       PYTHON_ARCH: "32"
+      TOXENV: "py35"
+      TOXPYTHON: "C:\\Python35\\python.exe"
 
     - PYTHON: "C:\\Python27-x64"
       PYTHON_VERSION: "2.7.x"
       PYTHON_ARCH: "64"
+      TOXENV: "py27"
+      TOXPYTHON: "C:\\Python27-x64\\python.exe"
 
     - PYTHON: "C:\\Python34-x64"
       PYTHON_VERSION: "3.4.x"
       PYTHON_ARCH: "64"
+      TOXENV: "py34"
+      TOXPYTHON: "C:\\Python34-x64\\python.exe"
 
     - PYTHON: "C:\\Python35-x64"
       PYTHON_VERSION: "3.5.0"
       PYTHON_ARCH: "64"
+      TOXENV: "py35"
+      TOXPYTHON: "C:\\Python35-x64\\python.exe"
 
 init:
   - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
 
 install:
-  # install Python and pip when not already installed
-  - ps: if (-not(Test-Path($env:PYTHON))) { & appveyor\install.ps1 }
-
   # prepend newly installed Python to the PATH
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
 
@@ -51,25 +53,10 @@ install:
   # install/upgrade setuptools and wheel to build packages
   - "pip install --upgrade setuptools wheel"
 
+  # install tox to run test suite in a virtual environment
+  - "pip install -U tox"
+
 build: false
 
 test_script:
-  - "%WITH_COMPILER% pip wheel -v -w dist ."
-
-after_test:
-  - "%WITH_COMPILER% python setup.py sdist"
-
-artifacts:
-  # archive the generated packages in the ci.appveyor.com build report
-  - path: dist\booleanOperations*.whl
-  - path: dist\booleanOperations*.zip
-
-deploy:
-  - provider: GitHub
-    auth_token:
-      secure: Ye5oDcla8MqxYZbTSxcrZZjGLq/tO1CfF4NcEvbCOdGCkeoRfc4heGXIRXROl3dw
-    artifact:
-    draft: false
-    prerelease: false
-    on:
-      appveyor_repo_tag: true
+  - "tox"
