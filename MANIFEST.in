@@ -1,4 +1,1 @@
-include MANIFEST.in LICENSE README.md
-include setup.py requirements.txt setup.cfg tox.ini
-recursive-include Lib *.py
-recursive-include tests *.py
+exclude .travis.yml appveyor.yml .gitignore

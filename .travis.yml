@@ -7,6 +7,11 @@ python:
 install:
   - pip install --upgrade pip setuptools wheel
   - pip install tox-travis
+  # Travis by default only clones a 'shallow' repository with --depth=50.
+  # When building the distribution packages, we use git to determine the
+  # package version string (via setuptools_scm), hence we need to fetch
+  # the whole repo, and not just the last 50 commits.
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then git fetch --unshallow; fi
 script: tox
 after_success:
   - pip wheel --no-deps -w dist .

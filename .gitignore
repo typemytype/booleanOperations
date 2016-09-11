@@ -9,3 +9,6 @@ Lib/booleanOperations.egg-info
 .eggs
 
 .DS_Store
+
+.tox/
+.cache/
