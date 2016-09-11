@@ -1,7 +1,7 @@
 from __future__ import print_function, division, absolute_import
 from .booleanOperationManager import BooleanOperationManager
 
-__version__ = "0.5.0"
+__version__ = "0.5.0.dev4"
 
 # export BooleanOperationManager static methods
 union = BooleanOperationManager.union
