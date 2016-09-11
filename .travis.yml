@@ -9,7 +9,7 @@ install:
   - pip install tox-travis
 script: tox
 after_success:
-  - pip wheel -w dist .
+  - pip wheel --no-deps -w dist .
   - python setup.py sdist
 before_deploy:
   - export ZIP=$(ls dist/booleanOperations*.zip)
