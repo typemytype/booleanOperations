@@ -1,13 +1,5 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 import sys
-import re
-
-version = ''
-with open('Lib/booleanOperations/__init__.py', 'r') as fd:
-    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
-                        fd.read(), re.MULTILINE).group(1)
-if not version:
-    raise RuntimeError('Cannot find version information')
 
 needs_pytest = {'pytest', 'test'}.intersection(sys.argv)
 pytest_runner = ['pytest_runner'] if needs_pytest else []
@@ -19,16 +11,18 @@ with open('README.md', 'r') as f:
 
 setup_params = dict(
     name="booleanOperations",
-    version=version,
+    use_scm_version=True,
     description="Boolean operations on paths.",
     long_description=long_description,
     author="Frederik Berlaen",
     author_email="frederik@typemytype.com",
     url="https://github.com/typemytype/booleanOperations",
     license="MIT",
-    packages=["booleanOperations"],
     package_dir={"": "Lib"},
-    setup_requires=pytest_runner + wheel,
+    packages=find_packages("Lib"),
+    setup_requires=[
+        "setuptools_scm>=1.11.1",
+    ] + pytest_runner + wheel,
     tests_require=[
         'pytest>=3.0.2',
     ],
