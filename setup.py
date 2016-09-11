@@ -14,10 +14,14 @@ pytest_runner = ['pytest_runner'] if needs_pytest else []
 needs_wheel = {'bdist_wheel'}.intersection(sys.argv)
 wheel = ['wheel'] if needs_wheel else []
 
+with open('README.md', 'r') as f:
+    long_description = f.read()
+
 setup_params = dict(
     name="booleanOperations",
     version=version,
     description="Boolean operations on paths.",
+    long_description=long_description,
     author="Frederik Berlaen",
     author_email="frederik@typemytype.com",
     url="https://github.com/typemytype/booleanOperations",
