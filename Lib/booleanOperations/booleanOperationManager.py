@@ -1,5 +1,7 @@
 from __future__ import print_function, division, absolute_import
 from .flatten import InputContour, OutputContour
+from .exceptions import (
+    InvalidSubjectContourError, InvalidClippingContourError, ExecutionError)
 import pyclipper
 
 
@@ -32,13 +34,23 @@ def clipExecute(subjectContours, clipContours, operation, subjectFillType="nonZe
                 clipFillType="nonZero"):
     pc = pyclipper.Pyclipper()
 
-    if subjectContours:
-        pc.AddPaths(subjectContours, pyclipper.PT_SUBJECT)
-    if clipContours:
-        pc.AddPaths(clipContours, pyclipper.PT_CLIP)
+    for i, subjectContour in enumerate(subjectContours):
+        try:
+            pc.AddPath(subjectContour, pyclipper.PT_SUBJECT)
+        except pyclipper.ClipperException:
+            raise InvalidSubjectContourError("contour %d is invalid for clipping" % i)
+    for j, clipContour in enumerate(clipContours):
+        try:
+            pc.AddPath(clipContour, pyclipper.PT_CLIP)
+        except pyclipper.ClipperException:
+            raise InvalidClippingContourError("contour %d is invalid for clipping" % j)
 
-    solution = pc.Execute(_operationMap[operation], _fillTypeMap[subjectFillType],
-                          _fillTypeMap[clipFillType])
+    try:
+        solution = pc.Execute(_operationMap[operation],
+                              _fillTypeMap[subjectFillType],
+                              _fillTypeMap[clipFillType])
+    except pyclipper.ClipperException as exc:
+        raise ExecutionError(exc)
 
     return [[tuple(p) for p in path] for path in solution]
 
