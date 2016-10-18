@@ -1,4 +1,5 @@
 [![PyPI](https://img.shields.io/pypi/v/booleanOperations.svg)](https://pypi.org/project/booleanOperations/)
+![Python Versions](https://img.shields.io/badge/python-2.7%2C%203.4%2C%203.5-blue.svg)
 
 BooleanOperations
 =================
