@@ -21,7 +21,7 @@ setup_params = dict(
     package_dir={"": "Lib"},
     packages=find_packages("Lib"),
     setup_requires=[
-        "setuptools_scm>=1.11.1",
+        "setuptools_scm>=1.11.1,!=1.13.1,!=1.14.0",
     ] + pytest_runner + wheel,
     tests_require=[
         'pytest>=3.0.2',
