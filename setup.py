@@ -28,10 +28,8 @@ setup_params = dict(
     ],
     install_requires=[
         "pyclipper>=1.0.5",
-        # TODO(anthrotype): un-comment these once they are on PyPI.
-        # In the meantime, pip install -r requirements.txt
-        # "fonttools>=3.1",
-        # "ufoLib>=1.2",
+        "fonttools>=3.1.2",
+        "ufoLib>=2.0.0",
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
