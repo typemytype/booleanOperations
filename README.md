@@ -25,14 +25,7 @@ BooleanOperations depends on the following packages:
 - [fonttools](github.com/behdad/fonttools)
 - [ufoLib](https://github.com/unified-font-object/ufoLib)
 
-As of September 2016, only pyclipper is available on PyPI and therefore installed automatically with booleanOperations. The fonttools version 3.0 available from PyPI is too old, whereas ufoLib simply is not on PyPI yet, hence you need to install them separately.
-
-You can use pip to install them from the respective git repositories:
-
-```
-pip install git+https://github.com/behdad/fonttools.git
-pip install git+https://github.com/unified-font-object/ufoLib.git
-```
+All dependencies are available on PyPI, so they will be resolved automatically upon installing booleanOperations.
 
 BooleanOperationManager
 -----------------------
