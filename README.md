@@ -1,3 +1,4 @@
+[![Build Status](https://api.travis-ci.org/typemytype/booleanOperations.svg)](https://travis-ci.org/typemytype/booleanOperations)
 [![PyPI](https://img.shields.io/pypi/v/booleanOperations.svg)](https://pypi.org/project/booleanOperations/)
 ![Python Versions](https://img.shields.io/badge/python-2.7%2C%203.4%2C%203.5-blue.svg)
 
