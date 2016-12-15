@@ -35,15 +35,19 @@ def clipExecute(subjectContours, clipContours, operation, subjectFillType="nonZe
     pc = pyclipper.Pyclipper()
 
     for i, subjectContour in enumerate(subjectContours):
-        try:
-            pc.AddPath(subjectContour, pyclipper.PT_SUBJECT)
-        except pyclipper.ClipperException:
-            raise InvalidSubjectContourError("contour %d is invalid for clipping" % i)
+        # ignore paths with no area
+        if pyclipper.Area(subjectContour):
+            try:
+                pc.AddPath(subjectContour, pyclipper.PT_SUBJECT)
+            except pyclipper.ClipperException:
+                raise InvalidSubjectContourError("contour %d is invalid for clipping" % i)
     for j, clipContour in enumerate(clipContours):
-        try:
-            pc.AddPath(clipContour, pyclipper.PT_CLIP)
-        except pyclipper.ClipperException:
-            raise InvalidClippingContourError("contour %d is invalid for clipping" % j)
+        # ignore paths with no area
+        if pyclipper.Area(clipContour):
+            try:
+                pc.AddPath(clipContour, pyclipper.PT_CLIP)
+            except pyclipper.ClipperException:
+                raise InvalidClippingContourError("contour %d is invalid for clipping" % j)
 
     try:
         solution = pc.Execute(_operationMap[operation],
