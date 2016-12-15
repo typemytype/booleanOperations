@@ -51,9 +51,6 @@ class BooleanGlyphDataPointPen(AbstractPointPen):
 
             contour = self._glyph.contourClass()
             contour._points = points
-            if contour.area != 0:
-                # ignore paths with no area
-                self._glyph.contours.append(contour)
 
     def beginPath(self):
         self._points = []
@@ -76,7 +73,7 @@ class BooleanContour(object):
 
     def __init__(self):
         self._points = []
-        self._area = None
+        self._clockwise = None
         self._bounds = None
 
     def __len__(self):
@@ -95,19 +92,14 @@ class BooleanContour(object):
         pointPen.endPath()
 
     def _get_clockwise(self):
-        return self.area < 0
-
-    clockwise = property(_get_clockwise)
-
-    def _get_area(self):
-        if self._area is None:
+        if self._clockwise is None:
             pen = AreaPen()
             pen.endPath = pen.closePath
             self.draw(pen)
-            self._area = pen.value
-        return self._area
+            self._clockwise = pen.value < 0
+        return self._clockwise
 
-    area = property(_get_area)
+    clockwise = property(_get_clockwise)
 
     def _get_bounds(self):
         if self._bounds is None:
