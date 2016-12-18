@@ -51,6 +51,7 @@ class BooleanGlyphDataPointPen(AbstractPointPen):
 
             contour = self._glyph.contourClass()
             contour._points = points
+            self._glyph.contours.append(contour)
 
     def beginPath(self):
         self._points = []
