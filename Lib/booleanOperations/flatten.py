@@ -973,15 +973,17 @@ class OutputContour(object):
             points.extend(segment.points)
 
         hasOnCurve = False
-        foundOriginalStartingPoint = False
+        originalStartingPoints = []
         for index, point in enumerate(points):
             if point.segmentType is not None:
                 hasOnCurve = True
                 if point.kwargs is not None and point.kwargs.get("startingPoint"):
-                    foundOriginalStartingPoint = True
-                    break
-        if foundOriginalStartingPoint:
-            points = points[index:] + points[:index]
+                    distanceFromOrigin = math.hypot(*point)
+                    originalStartingPoints.append((distanceFromOrigin, index))
+        if originalStartingPoints:
+            # use the original starting point that is closest to the origin
+            startingPointIndex = sorted(originalStartingPoints)[0][1]
+            points = points[startingPointIndex:] + points[:startingPointIndex]
         elif hasOnCurve:
             while points[0].segmentType is None:
                 p = points.pop(0)
