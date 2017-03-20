@@ -306,6 +306,7 @@ class ContourPointDataPen:
 
     def __init__(self):
         self._points = None
+        self._foundStartingPoint = False
 
     def getData(self):
         """
@@ -343,6 +344,8 @@ class ContourPointDataPen:
 
     def addPoint(self, pt, segmentType=None, smooth=False, name=None, **kwargs):
         assert segmentType != "move"
+        if not self._foundStartingPoint and segmentType is not None:
+            kwargs['startingPoint'] = self._foundStartingPoint = True
         data = InputPoint(
             coordinates=pt,
             segmentType=segmentType,
@@ -970,11 +973,18 @@ class OutputContour(object):
             points.extend(segment.points)
 
         hasOnCurve = False
-        for point in points:
+        originalStartingPoints = []
+        for index, point in enumerate(points):
             if point.segmentType is not None:
                 hasOnCurve = True
-                break
-        if hasOnCurve:
+                if point.kwargs is not None and point.kwargs.get("startingPoint"):
+                    distanceFromOrigin = math.hypot(*point)
+                    originalStartingPoints.append((distanceFromOrigin, index))
+        if originalStartingPoints:
+            # use the original starting point that is closest to the origin
+            startingPointIndex = sorted(originalStartingPoints)[0][1]
+            points = points[startingPointIndex:] + points[:startingPointIndex]
+        elif hasOnCurve:
             while points[0].segmentType is None:
                 p = points.pop(0)
                 points.append(p)
