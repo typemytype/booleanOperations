@@ -335,7 +335,8 @@ class ContourPointDataPen:
         # done
         return self._points
 
-    def beginPath(self):
+    def beginPath(self, **kwargs):
+        # TODO store and pass on the contour identifier?
         assert self._points is None
         self._points = []
 
