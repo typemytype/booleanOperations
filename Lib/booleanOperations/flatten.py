@@ -10,12 +10,9 @@ To Do:
 - need to know what kind of curves should be used for
   curve fit--curve or qcurve
 - false curves and duplicate points need to be filtered early on
-
 notes:
 - the flattened segments *must* be cyclical.
   if they aren't, matching is almost impossible.
-
-
 optimization ideas:
 - the flattening of the output segment in the full contour
   matching is probably expensive.
@@ -39,7 +36,6 @@ optimization ideas:
   known points are:
     input oncurve points
     if nothing found intersection points (only use this is in the final curve fitting stage)
-
 test cases:
 - untouched contour: make clockwise and counter-clockwise tests
   of the same contour
@@ -242,7 +238,6 @@ class InputSegment(object):
     def tValueForPoint(self, point):
         """
         get a t values for a given point
-
         required:
             the point must be a point on the curve.
             in an overlap cause the point will be an intersection points wich is alwasy a point on the curve
@@ -1145,7 +1140,6 @@ def _flattenSegment(segment, approximateSegmentLength=_approximateSegmentLength)
     The first and last points in the segment must be
     on curves. The returned list of points will not
     include the first on curve point.
-
     false curves (where the off curves are not any
     different from the on curves) must not be sent here.
     duplicate points must not be sent here.
