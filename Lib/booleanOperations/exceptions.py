@@ -17,5 +17,9 @@ class InvalidClippingContourError(InvalidContourError):
     """Rased when a 'clipping' contour is not valid"""
 
 
+class OpenContourError(BooleanOperationsError):
+    """Rased when any input contour is open"""
+
+
 class ExecutionError(BooleanOperationsError):
     """Raised when clipping execution fails"""
