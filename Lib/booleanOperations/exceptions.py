@@ -6,15 +6,19 @@ class BooleanOperationsError(Exception):
 
 
 class InvalidContourError(BooleanOperationsError):
-    """Rased when any input contour is invalid"""
+    """Raised when any input contour is invalid"""
 
 
 class InvalidSubjectContourError(InvalidContourError):
-    """Rased when a 'subject' contour is not valid"""
+    """Raised when a 'subject' contour is not valid"""
 
 
 class InvalidClippingContourError(InvalidContourError):
-    """Rased when a 'clipping' contour is not valid"""
+    """Raised when a 'clipping' contour is not valid"""
+
+
+class OpenContourError(BooleanOperationsError):
+    """Raised when any input contour is open"""
 
 
 class ExecutionError(BooleanOperationsError):
