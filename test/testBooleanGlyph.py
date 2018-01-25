@@ -3,12 +3,70 @@ from __future__ import print_function, division, absolute_import
 import sys
 import os
 import unittest
-from pkg_resources import resource_filename
 
-from fontPens.digestPointPen import DigestPointPen
+# from fontPens.digestPointPen import DigestPointPen
+
+###### remove when fontPens is on PyPI
+from ufoLib.pointPen import AbstractPointPen
+
+
+class DigestPointPen(AbstractPointPen):
+    """
+    This calculates a tuple representing the structure and values in a glyph:
+
+        - including coordinates
+        - including components
+    """
+
+    def __init__(self, ignoreSmoothAndName=False):
+        self._data = []
+        self.ignoreSmoothAndName = ignoreSmoothAndName
+
+    def beginPath(self, identifier=None):
+        self._data.append(('beginPath', identifier))
+
+    def endPath(self):
+        self._data.append('endPath')
+
+    def addPoint(self, pt, segmentType=None, smooth=False, name=None, **kwargs):
+        if self.ignoreSmoothAndName:
+            self._data.append((pt, segmentType))
+        else:
+            self._data.append((pt, segmentType, smooth, name))
+
+    def addComponent(self, baseGlyphName, transformation, identifier=None):
+        t = []
+        for v in transformation:
+            if int(v) == v:
+                t.append(int(v))
+            else:
+                t.append(v)
+        self._data.append((baseGlyphName, tuple(t), identifier))
+
+    def getDigest(self):
+        """
+        Return the digest as a tuple with all coordinates of all points.
+        """
+        return tuple(self._data)
+
+    def getDigestPointsOnly(self, needSort=True):
+        """
+        Return the digest as a tuple with all coordinates of all points,
+        - but without smooth info or drawing instructions.
+        - For instance if you want to compare 2 glyphs in shape,
+          but not interpolatability.
+        """
+        points = []
+        for item in self._data:
+            if isinstance(item, tuple) and isinstance(item[0], tuple):
+                points.append(item[0])
+        if needSort:
+            points.sort()
+        return tuple(points)
+
+###### end remove
 
 import defcon
-
 import booleanOperations
 
 
@@ -58,7 +116,7 @@ def _makeUnionTestCase(glyph, method):
 
 
 def _addGlyphTests():
-    root = resource_filename("booleanOperations.test", 'testdata')
+    root = os.path.join(os.path.dirname(__file__), 'testdata')
     path = os.path.join(root, "test.ufo")
     font = defcon.Font(path)
 
