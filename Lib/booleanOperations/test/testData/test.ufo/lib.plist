@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.defcon.sortDescriptor</key>
+	<array>
+		<dict>
+			<key>ascending</key>
+			<string>Bot</string>
+			<key>type</key>
+			<string>characterSet</string>
+		</dict>
+	</array>
+	<key>public.glyphOrder</key>
+	<array>
+		<string>test.1</string>
+		<string>test.2</string>
+		<string>test.3</string>
+		<string>test.4</string>
+		<string>test.5</string>
+		<string>test.6</string>
+		<string>test.6</string>
+		<string>test.7</string>
+		<string>test.8</string>
+		<string>test.9</string>
+		<string>test.10</string>
+		<string>test.11</string>
+		<string>test.12</string>
+		<string>test.9</string>
+		<string>test.10</string>
+		<string>test.11</string>
+		<string>test.12</string>
+	</array>
+</dict>
+</plist>
