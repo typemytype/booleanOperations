@@ -118,6 +118,7 @@ def _makeUnionTestCase(glyph, method):
 def _addGlyphTests():
     root = os.path.join(os.path.dirname(__file__), 'testdata')
     path = os.path.join(root, "test.ufo")
+    print("Reading ufo %s" % path)
     font = defcon.Font(path)
 
     booleanMethods = {
