@@ -5,12 +5,15 @@ try:
 except ImportError:
     hasMojo = False
 
+try:
+    f = CurrentFont()
+except NameError:
+    f = {}
+
 if hasMojo:
     glyphViewRoundValues = getDefault("glyphViewRoundValues")
     setDefault("glyphViewRoundValues", 0)
 
-
-f = CurrentFont()
 
 for g in f:
     n = g.naked()
