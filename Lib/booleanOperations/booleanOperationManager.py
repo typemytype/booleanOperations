@@ -79,15 +79,6 @@ def _performOperation(operation, subjectContours, clipContours, outPen):
                 # the input is expired if a match was made,
                 # so stop passing it to the outputs
                 break
-    # re-curve segments
-    for inputContour in inputContours:
-        # skip contours that were comppletely used in the previous step
-        if inputContour.used:
-            continue
-        # XXX this could be expensive if an input becomes completely used
-        # it doesn't stop from being passed to the output
-        for outputContour in outputContours:
-            outputContour.reCurveFromInputContourSegments(inputContour)
     # curve fit
     for outputContour in outputContours:
         outputContour.reCurveSubSegments(inputContours)
