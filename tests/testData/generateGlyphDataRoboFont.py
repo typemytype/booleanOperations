@@ -6,9 +6,15 @@ except ImportError:
     hasMojo = False
 
 try:
-    f = CurrentFont()
+    CurrentFont
 except NameError:
-    f = {}
+    class CurrentFont(dict):
+
+        def save(self, path=None):
+            pass
+
+
+f = CurrentFont()
 
 if hasMojo:
     glyphViewRoundValues = getDefault("glyphViewRoundValues")
