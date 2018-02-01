@@ -36,8 +36,6 @@ for g in f:
             d.clear()
             func = getattr(booleanOperations, method)
             func([n[0]], n[1:], d.getPointPen())
-            d.leftMargin = 0
-            d.rightMargin = 0
 
     f.save()
 
