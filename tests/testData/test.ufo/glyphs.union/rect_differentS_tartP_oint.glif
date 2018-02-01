@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="rect_differentStartPoint" format="2">
+  <advance width="500"/>
+  <outline>
+    <contour>
+      <point x="358.0" y="439.0" type="line"/>
+      <point x="0.0" y="439.0" type="line"/>
+      <point x="0.0" y="81.0" type="line"/>
+      <point x="358.0" y="81.0" type="line"/>
+    </contour>
+  </outline>
+</glyph>

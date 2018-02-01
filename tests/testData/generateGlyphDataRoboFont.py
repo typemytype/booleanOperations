@@ -22,27 +22,24 @@ if hasMojo:
 
 
 for g in f:
-    n = g.naked()
+    g.leftMargin = 0
+    g.rightMargin = 0
+    n = g.naked()    
     d = g.getLayer("union")
     d.clear()
     d.appendGlyph(g)
     d.removeOverlap(round=0)
 
     if len(g) > 1:
+        for method in "xor", "difference", "intersection":            
+            d = g.getLayer(method)     
+            d.clear()
+            func = getattr(booleanOperations, method)
+            func([n[0]], n[1:], d.getPointPen())
+            d.leftMargin = 0
+            d.rightMargin = 0
 
-        d = g.getLayer("xor")
-        d.clear()
-        booleanOperations.xor([n[0]], n[1:], d.getPointPen())
-
-        d = g.getLayer("difference")
-        d.clear()
-        booleanOperations.difference([n[0]], n[1:], d.getPointPen())
-
-        d = g.getLayer("intersection")
-        d.clear()
-        booleanOperations.intersection([n[0]], n[1:], d.getPointPen())
-
-f.save()
+    f.save()
 
 if hasMojo:
     setDefault("glyphViewRoundValues", glyphViewRoundValues)

@@ -2,34 +2,26 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>com.defcon.sortDescriptor</key>
-	<array>
-		<dict>
-			<key>ascending</key>
-			<string>Bot</string>
-			<key>type</key>
-			<string>characterSet</string>
-		</dict>
-	</array>
 	<key>public.glyphOrder</key>
 	<array>
-		<string>test.1</string>
-		<string>test.2</string>
-		<string>test.3</string>
-		<string>test.4</string>
-		<string>test.5</string>
-		<string>test.6</string>
-		<string>test.6</string>
-		<string>test.7</string>
-		<string>test.8</string>
-		<string>test.9</string>
-		<string>test.10</string>
-		<string>test.11</string>
-		<string>test.12</string>
-		<string>test.9</string>
-		<string>test.10</string>
-		<string>test.11</string>
-		<string>test.12</string>
+		<string>oval</string>
+		<string>rect</string>
+		<string>rectRect</string>
+		<string>ovalRect</string>
+		<string>rectOval</string>
+		<string>ovalOval</string>
+		<string>Q</string>
+		<string>QTail_reversed</string>
+		<string>ovalOval_reversed</string>
+		<string>ovalRect_reversed</string>
+		<string>rectOval_reversed</string>
+		<string>rectRect_reversed</string>
+		<string>rectOval_reversed</string>
+		<string>rectRect_reversed</string>
+		<string>oval_differentStartPoint</string>
+		<string>rect_differentStartPoint</string>
+		<string>oval_differentStartPoint</string>
+		<string>rect_differentStartPoint</string>
 	</array>
 </dict>
 </plist>

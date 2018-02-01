@@ -2,25 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>test.1</key>
-	<string>test.1.glif</string>
-	<key>test.10</key>
-	<string>test.10.glif</string>
-	<key>test.11</key>
-	<string>test.11.glif</string>
-	<key>test.12</key>
-	<string>test.12.glif</string>
-	<key>test.2</key>
-	<string>test.2.glif</string>
-	<key>test.3</key>
-	<string>test.3.glif</string>
-	<key>test.4</key>
-	<string>test.4.glif</string>
-	<key>test.5</key>
-	<string>test.5.glif</string>
-	<key>test.6</key>
-	<string>test.6.glif</string>
-	<key>test.9</key>
-	<string>test.9.glif</string>
+	<key>Q</key>
+	<string>Q_.glif</string>
+	<key>QTail_reversed</key>
+	<string>Q_T_ail_reversed.glif</string>
+	<key>ovalOval</key>
+	<string>ovalO_val.glif</string>
+	<key>ovalOval_reversed</key>
+	<string>ovalO_val_reversed.glif</string>
+	<key>ovalRect</key>
+	<string>ovalR_ect.glif</string>
+	<key>ovalRect_reversed</key>
+	<string>ovalR_ect_reversed.glif</string>
+	<key>rectOval</key>
+	<string>rectO_val.glif</string>
+	<key>rectOval_reversed</key>
+	<string>rectO_val_reversed.glif</string>
+	<key>rectRect</key>
+	<string>rectR_ect.glif</string>
+	<key>rectRect_reversed</key>
+	<string>rectR_ect_reversed.glif</string>
 </dict>
 </plist>
