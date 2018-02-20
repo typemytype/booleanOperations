@@ -3,7 +3,7 @@
 BooleanOperations
 =================
 
-Boolean operations on paths based on a super fast `polygon clipper
+Boolean operations on paths which uses a super fast `polygon clipper
 library by Angus Johnson <http://www.angusj.com/delphi/clipper.php>`__.
 
 You can download the latest version from PyPI:
