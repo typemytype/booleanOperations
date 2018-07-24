@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="rectRect_reversed" format="2">
+  <advance width="150"/>
+  <outline>
+    <contour>
+      <point x="0.0" y="0.0" type="line"/>
+      <point x="100.0" y="0.0" type="line"/>
+      <point x="100.0" y="100.0" type="line"/>
+      <point x="0.0" y="100.0" type="line"/>
+    </contour>
+    <contour>
+      <point x="50.0" y="50.0" type="line"/>
+      <point x="50.0" y="150.0" type="line"/>
+      <point x="150.0" y="150.0" type="line"/>
+      <point x="150.0" y="50.0" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.typemytype.robofont.Image.Brightness</key>
+      <integer>0</integer>
+      <key>com.typemytype.robofont.Image.Contrast</key>
+      <integer>1</integer>
+      <key>com.typemytype.robofont.Image.Saturation</key>
+      <integer>1</integer>
+      <key>com.typemytype.robofont.Image.Sharpness</key>
+      <real>0.4</real>
+    </dict>
+  </lib>
+</glyph>

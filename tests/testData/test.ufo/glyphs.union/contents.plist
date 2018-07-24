@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Q</key>
+	<string>Q_.glif</string>
+	<key>QTail_reversed</key>
+	<string>Q_T_ail_reversed.glif</string>
+	<key>oval</key>
+	<string>oval.glif</string>
+	<key>ovalOval</key>
+	<string>ovalO_val.glif</string>
+	<key>ovalOval_reversed</key>
+	<string>ovalO_val_reversed.glif</string>
+	<key>ovalRect</key>
+	<string>ovalR_ect.glif</string>
+	<key>ovalRect_reversed</key>
+	<string>ovalR_ect_reversed.glif</string>
+	<key>oval_differentStartPoint</key>
+	<string>oval_differentS_tartP_oint.glif</string>
+	<key>rect</key>
+	<string>rect.glif</string>
+	<key>rectOval</key>
+	<string>rectO_val.glif</string>
+	<key>rectOval_reversed</key>
+	<string>rectO_val_reversed.glif</string>
+	<key>rectRect</key>
+	<string>rectR_ect.glif</string>
+	<key>rectRect_reversed</key>
+	<string>rectR_ect_reversed.glif</string>
+	<key>rect_differentStartPoint</key>
+	<string>rect_differentS_tartP_oint.glif</string>
+</dict>
+</plist>

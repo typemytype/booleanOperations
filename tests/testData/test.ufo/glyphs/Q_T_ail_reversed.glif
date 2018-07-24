@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="QTail_reversed" format="2">
+  <advance width="533"/>
+  <outline>
+    <contour>
+      <point x="250.0" y="0.0" type="curve" smooth="yes"/>
+      <point x="388.0" y="0.0"/>
+      <point x="500.0" y="112.0"/>
+      <point x="500.0" y="250.0" type="curve" smooth="yes"/>
+      <point x="500.0" y="388.0"/>
+      <point x="388.0" y="500.0"/>
+      <point x="250.0" y="500.0" type="curve" smooth="yes"/>
+      <point x="112.0" y="500.0"/>
+      <point x="0.0" y="388.0"/>
+      <point x="0.0" y="250.0" type="curve" smooth="yes"/>
+      <point x="0.0" y="112.0"/>
+      <point x="112.0" y="0.0"/>
+    </contour>
+    <contour>
+      <point x="250.0" y="100.0" type="curve" smooth="yes"/>
+      <point x="332.0" y="100.0"/>
+      <point x="400.0" y="168.0"/>
+      <point x="400.0" y="250.0" type="curve" smooth="yes"/>
+      <point x="400.0" y="332.0"/>
+      <point x="332.0" y="400.0"/>
+      <point x="250.0" y="400.0" type="curve" smooth="yes"/>
+      <point x="168.0" y="400.0"/>
+      <point x="100.0" y="332.0"/>
+      <point x="100.0" y="250.0" type="curve" smooth="yes"/>
+      <point x="100.0" y="168.0"/>
+      <point x="168.0" y="100.0"/>
+    </contour>
+    <contour>
+      <point x="241.0" y="191.0" type="line"/>
+      <point x="306.0" y="256.0" type="line"/>
+      <point x="533.0" y="29.0" type="line"/>
+      <point x="468.0" y="-36.0" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.typemytype.robofont.Image.Brightness</key>
+      <integer>0</integer>
+      <key>com.typemytype.robofont.Image.Contrast</key>
+      <integer>1</integer>
+      <key>com.typemytype.robofont.Image.Saturation</key>
+      <integer>1</integer>
+      <key>com.typemytype.robofont.Image.Sharpness</key>
+      <real>0.4</real>
+    </dict>
+  </lib>
+</glyph>

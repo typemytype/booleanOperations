@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="rectOval" format="2">
+  <advance width="100"/>
+  <outline>
+    <contour>
+      <point x="100" y="50" type="line" smooth="yes"/>
+      <point x="128.0" y="50.0"/>
+      <point x="150.0" y="72.0"/>
+      <point x="150.0" y="100.0" type="curve" smooth="yes"/>
+      <point x="150.0" y="128.0"/>
+      <point x="128.0" y="150.0"/>
+      <point x="100.0" y="150.0" type="curve" smooth="yes"/>
+      <point x="72.0" y="150.0"/>
+      <point x="50.0" y="128.0"/>
+      <point x="50.0" y="100.0" type="curve" smooth="yes"/>
+      <point x="100" y="100" type="line"/>
+    </contour>
+  </outline>
+</glyph>
