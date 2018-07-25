@@ -1,9 +1,16 @@
 sudo: false
 language: python
-python:
-  - 2.7
-  - 3.4
-  - 3.5
+
+matrix:
+  include:
+    - python: 2.7
+    - python: 3.6
+    - python: 3.7
+      # required to run python3.7 on Travis CI
+      # https://github.com/travis-ci/travis-ci/issues/9815
+      dist: xenial
+      sudo: true
+
 install:
   - pip install --upgrade pip setuptools wheel
   - pip install tox-travis
@@ -11,10 +18,13 @@ install:
   # When building the distribution packages, we use git to determine the
   # package version string (via setuptools_scm), hence we need to fetch
   # the whole repo, and not just the last 50 commits.
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then git fetch --unshallow; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then git fetch --unshallow; fi
+
 script: tox
+
 before_deploy:
   - python setup.py sdist bdist_wheel
+
 deploy:
   # deploy to Github Releases on tags
   - provider: releases
@@ -27,7 +37,7 @@ deploy:
       repo: typemytype/booleanOperations
       tags: true
       all_branches: true
-      python: 3.5
+      python: 3.6
   # deploy to PyPI on tags
   - provider: pypi
     server: https://upload.pypi.org/legacy/
@@ -35,7 +45,7 @@ deploy:
       repo: typemytype/booleanOperations
       tags: true
       all_branches: true
-      python: 3.5
+      python: 3.6
     user: anthrotype
     password:
       secure: B6rFOTA8ol1kt210q7USDVOzLFWUyMIwdZuaUdejYmUb0CXK6W8kKj0H01yBCgjkhtew9YEQSB62jFiGUOJH9L8JjpJO2RG8cHIIblXQfQ5DXogmcEtsAFotQz0o3UO/SYJaMY917XsPCqw3MTgksd2NWwO7H3YCjaWntN4zZxyTWowGr2Vhbj9s8e+MGMtrZ3Is91AcoXNI7HPj2oVhAtPP5GGpceIP7JlOGdHGUFJKuwJLRKVjEURWXN6ZOQNoxuG6KdkpGtJYCFgRCW65e48WpQs8lts/ByyOMyRItPIPI+K/cPOaIvZ7IUhu9SueBgKcW2YVzQrPzD07N5Lhb4LaKhqgMwpy7oWntnpO0/Xes7bonAoDYKPz7O3O3zl57fy1sVhGXZZNoGUfwyFz1PPecONavRpDQYCMEOq8BcENT86mf0xbAvtmTvBgos8NknmZ35ckUkyrye8t058CwW0yhEO2Pr36XPKoEP9EAiq2YRvINPYnI1T3jTPUUwnc3IAv4zQvPUKWqs2/hEVy8FTCz/0hBgDv2cs4pRcofTzfXSczGMfyuNS3i4n3CHc4FEOYP9MuEWGDC7KF4MVNsBWbh5pkISwhIwNbW1UDept2k+Dmb9XrSoCt5aSvEPJVT3YTA4qTGSUQvhzj1SvXi3s2lh+1WbibEJqNfpdobGg=
