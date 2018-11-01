@@ -2,14 +2,9 @@ from __future__ import print_function, division, absolute_import
 import weakref
 from copy import deepcopy
 
-try:
-    from robofab.pens.pointPen import AbstractPointPen
-    from robofab.pens.adapterPens import PointToSegmentPen, SegmentToPointPen
-    from robofab.pens.boundsPen import BoundsPen
-except:
-    from ufoLib.pointPen import (
-        AbstractPointPen, PointToSegmentPen, SegmentToPointPen)
-    from fontTools.pens.boundsPen import BoundsPen
+from fontTools.pens.pointPen import (
+    AbstractPointPen, PointToSegmentPen, SegmentToPointPen)
+from fontTools.pens.boundsPen import BoundsPen
 
 from fontTools.pens.areaPen import AreaPen
 from .booleanOperationManager import BooleanOperationManager

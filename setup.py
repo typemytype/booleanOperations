@@ -28,8 +28,7 @@ setup_params = dict(
     ],
     install_requires=[
         "pyclipper>=1.0.5",
-        "fonttools>=3.1.2",
-        "ufoLib>=2.0.0",
+        "fonttools>=3.32.0",
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
