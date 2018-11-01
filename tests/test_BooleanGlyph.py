@@ -72,7 +72,7 @@ def _addGlyphTests():
             shouldPerformTest, testMethod = testMaker(glyph, booleanMethod)
             if shouldPerformTest:
                 testMethodName = "test_%s_%s" % (glyph.name, booleanMethod)
-                testMethod.__name__ = testMethodName
+                testMethod.__name__ = str(testMethodName)
                 setattr(BooleanTests, testMethodName, testMethod)
 
 
