@@ -27,7 +27,6 @@ BooleanOperations depends on the following packages:
 - `pyclipper <https://pypi.org/project/pyclipper/>`__: Cython wrapper for
   the C++ Clipper library
 - `fonttools <github.com/behdad/fonttools>`__
-- `ufoLib <https://github.com/unified-font-object/ufoLib>`__
 
 All dependencies are available on PyPI, so they will be resolved
 automatically upon installing booleanOperations.
