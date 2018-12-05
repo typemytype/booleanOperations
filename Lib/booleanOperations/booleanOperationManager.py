@@ -44,7 +44,7 @@ def _addContour(clipperPath, contour, fillType, contourCount):
             return
 
     try:
-        clipperPath.AddPath(contour, pyclipper.PT_SUBJECT)
+        clipperPath.AddPath(contour, fillType)
     except pyclipper.ClipperException:
         raise InvalidSubjectContourError("contour %d is invalid for clipping" % contourCount)
 
@@ -54,10 +54,10 @@ def clipExecute(subjectContours, clipContours, operation, subjectFillType="nonZe
     pc = pyclipper.Pyclipper()
 
     for i, subjectContour in enumerate(subjectContours):
-        _addContour(pc, subjectContour, pyclipper.PT_SUBJECT, i)
+        _addContour(clipperPath=pc, contour=subjectContour, fillType=pyclipper.PT_SUBJECT, contourCount=i)
 
     for j, clipContour in enumerate(clipContours):
-        _addContour(pc, subjectContour, pyclipper.PT_CLIP, i)
+        _addContour(clipperPath=pc, contour=clipContour, fillType=pyclipper.PT_CLIP, contourCount=i)
 
     try:
         solution = pc.Execute(_operationMap[operation],
