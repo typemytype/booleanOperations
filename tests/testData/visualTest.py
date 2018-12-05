@@ -3,14 +3,30 @@ border = 20
 dotSize = 10
 offDotSize = dotSize * .5
 
+try:
+    CurrentFont
+except NameError:
+    class CurrentFont(dict):
+
+        glyphOrder = []
+
+        def save(self, path=None):
+            pass
+
+try:
+    saveImage
+except NameError:
+    def saveImage(*args, **kwargs):
+        pass
+
 
 f = CurrentFont()
 
 
 def drawOffCurve(anchor, off):
     x, y = anchor
-    offx, offy = off    
-    if offx or offy:        
+    offx, offy = off
+    if offx or offy:
         offx += x
         offy += y
         with savedState():
@@ -25,20 +41,20 @@ def drawGlyphWithPoints(glyph):
     stroke(0)
     drawGlyph(glyph)
     stroke(None)
-        
+
     for contour in glyph:
         fill(0, 1, 0)
-        for point in contour.bPoints:                        
+        for point in contour.bPoints:
             x, y = point.anchor
             drawOffCurve((x, y), point.bcpIn)
-            drawOffCurve((x, y), point.bcpOut)                                
+            drawOffCurve((x, y), point.bcpOut)
             oval(x - dotSize, y - dotSize, dotSize * 2, dotSize * 2)
             fill(1, 0, 0)
-            
+
 
 for glyphName in f.glyphOrder:
     if glyphName not in f:
-        continue        
+        continue
     g = f[glyphName]
     bounds = g.bounds
     if not bounds:
@@ -46,7 +62,7 @@ for glyphName in f.glyphOrder:
     minx, miny, maxx, maxy = bounds
     w = maxx - minx
     h = maxy - miny
-    layerCount = len(f.layers) 
+    layerCount = len(f.layers)
     newPage((w + border) * layerCount + border, h  + border * 2 + 100)
     translate(border, border + 100)
     translate(-minx, -miny)
@@ -63,9 +79,9 @@ for glyphName in f.glyphOrder:
         if g.name not in layer:
             translate(w + border)
             continue
-        lg = layer[g.name]        
+        lg = layer[g.name]
         drawGlyphWithPoints(lg)
         translate(w + border)
-    
+
 
 saveImage("visualTest.pdf")
