@@ -59,6 +59,11 @@ def clipExecute(subjectContours, clipContours, operation, subjectFillType="nonZe
     for j, clipContour in enumerate(clipContours):
         _addContour(clipperPath=pc, contour=clipContour, fillType=pyclipper.PT_CLIP, contourCount=i)
 
+    bounds = pc.GetBounds()
+    if (bounds.bottom, bounds.left, bounds.top, bounds.right) == (0, 0, 0, 0):
+        # do nothing if there are no paths
+        return []
+
     try:
         solution = pc.Execute(_operationMap[operation],
                               _fillTypeMap[subjectFillType],
