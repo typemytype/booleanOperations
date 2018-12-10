@@ -30,20 +30,39 @@ _fillTypeMap = {
 }
 
 
+def _addContour(clipperPath, contour, fillType, contourCount):
+    if pyclipper.Area(contour) == 0:
+        # skip paths with no area,
+        # BUT self intersecting paths could have no area...
+        dummy = pyclipper.Pyclipper()
+        try:
+            dummy.AddPath(contour, fillType)
+            shouldBeAValidPath = True
+        except pyclipper.ClipperException:
+            shouldBeAValidPath = False
+        if not shouldBeAValidPath:
+            return
+
+    try:
+        clipperPath.AddPath(contour, fillType)
+    except pyclipper.ClipperException:
+        raise InvalidSubjectContourError("contour %d is invalid for clipping" % contourCount)
+
+
 def clipExecute(subjectContours, clipContours, operation, subjectFillType="nonZero",
                 clipFillType="nonZero"):
     pc = pyclipper.Pyclipper()
 
     for i, subjectContour in enumerate(subjectContours):
-        try:
-            pc.AddPath(subjectContour, pyclipper.PT_SUBJECT)
-        except pyclipper.ClipperException:
-            raise InvalidSubjectContourError("contour %d is invalid for clipping" % i)
+        _addContour(clipperPath=pc, contour=subjectContour, fillType=pyclipper.PT_SUBJECT, contourCount=i)
+
     for j, clipContour in enumerate(clipContours):
-        try:
-            pc.AddPath(clipContour, pyclipper.PT_CLIP)
-        except pyclipper.ClipperException:
-            raise InvalidClippingContourError("contour %d is invalid for clipping" % j)
+        _addContour(clipperPath=pc, contour=clipContour, fillType=pyclipper.PT_CLIP, contourCount=i)
+
+    bounds = pc.GetBounds()
+    if (bounds.bottom, bounds.left, bounds.top, bounds.right) == (0, 0, 0, 0):
+        # do nothing if there are no paths
+        return []
 
     try:
         solution = pc.Execute(_operationMap[operation],
