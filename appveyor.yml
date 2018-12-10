@@ -3,20 +3,14 @@ environment:
     - PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7.x"
       PYTHON_ARCH: "32"
-      TOXENV: "py27"
-      TOXPYTHON: "C:\\Python27\\python.exe"
 
     - PYTHON: "C:\\Python36-x64"
       PYTHON_VERSION: "3.6.x"
       PYTHON_ARCH: "64"
-      TOXENV: "py36"
-      TOXPYTHON: "C:\\Python36-x64\\python.exe"
 
     - PYTHON: "C:\\Python37-x64"
       PYTHON_VERSION: "3.7.0"
       PYTHON_ARCH: "64"
-      TOXENV: "py37"
-      TOXPYTHON: "C:\\Python37-x64\\python.exe"
 
 init:
   - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
@@ -41,4 +35,4 @@ install:
 build: false
 
 test_script:
-  - "tox"
+  - "tox -e py"
