@@ -30,6 +30,8 @@
     <string>rectR_ect_reversed.glif</string>
     <key>rect_differentStartPoint</key>
     <string>rect_differentS_tartP_oint.glif</string>
+    <key>zeroArea</key>
+    <string>zeroA_rea.glif</string>
     <key>zeroAreaSelfIntersecting</key>
     <string>zeroA_reaS_elfI_ntersecting.glif</string>
   </dict>
