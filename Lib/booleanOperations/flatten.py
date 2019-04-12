@@ -2,6 +2,8 @@ from __future__ import print_function, division, absolute_import
 import math
 from fontTools.misc import bezierTools
 from fontTools.pens.basePen import decomposeQuadraticSegment
+import pyclipper
+from .exceptions import OpenContourError
 
 """
 To Do:
@@ -9,12 +11,9 @@ To Do:
 - need to know what kind of curves should be used for
   curve fit--curve or qcurve
 - false curves and duplicate points need to be filtered early on
-
 notes:
 - the flattened segments *must* be cyclical.
   if they aren't, matching is almost impossible.
-
-
 optimization ideas:
 - the flattening of the output segment in the full contour
   matching is probably expensive.
@@ -38,7 +37,6 @@ optimization ideas:
   known points are:
     input oncurve points
     if nothing found intersection points (only use this is in the final curve fitting stage)
-
 test cases:
 - untouched contour: make clockwise and counter-clockwise tests
   of the same contour
@@ -79,8 +77,8 @@ class InputContour(object):
             otherSegment = self.reversedSegments[index]
             otherSegment.flat = segment.getReversedFlatPoints()
             index -= 1
-        # get the direction
-        self.clockwise = contour.clockwise
+        # get the direction; returns True if counter-clockwise, False otherwise
+        self.clockwise = not pyclipper.Orientation(points)
         # store the gathered data
         if self.clockwise:
             self.clockwiseSegments = self.segments
@@ -279,7 +277,6 @@ class InputSegment(object):
     def tValueForPoint(self, point):
         """
         get a t values for a given point
-
         required:
             the point must be a point on the curve.
             in an overlap cause the point will be an intersection points wich is alwasy a point on the curve
@@ -312,6 +309,9 @@ class InputPoint(object):
         self.name = name
         self.kwargs = kwargs
 
+    def __getitem__(self, i):
+        return self.coordinates[i]
+
     def copy(self):
         copy = self.__class__(
             coordinates=self.coordinates,
@@ -342,6 +342,7 @@ class ContourPointDataPen:
 
     def __init__(self):
         self._points = None
+        self._foundStartingPoint = False
 
     def getData(self):
         """
@@ -370,7 +371,8 @@ class ContourPointDataPen:
         # done
         return self._points
 
-    def beginPath(self):
+    def beginPath(self, **kwargs):
+        # TODO store and pass on the contour identifier?
         assert self._points is None
         self._points = []
 
@@ -378,7 +380,10 @@ class ContourPointDataPen:
         pass
 
     def addPoint(self, pt, segmentType=None, smooth=False, name=None, **kwargs):
-        assert segmentType != "move"
+        if segmentType == "move":
+            raise OpenContourError("Unhandled open contour")
+        if not self._foundStartingPoint and segmentType is not None:
+            kwargs['startingPoint'] = self._foundStartingPoint = True
         data = InputPoint(
             coordinates=pt,
             segmentType=segmentType,
@@ -491,7 +496,7 @@ class OutputContour(object):
     def __init__(self, pointList):
         if pointList[0] == pointList[-1]:
             del pointList[-1]
-        self.clockwise = _getClockwise(pointList)
+        self.clockwise = not pyclipper.Orientation(pointList)
         self.segments = [
             OutputSegment(
                 segmentType="flat",
@@ -591,86 +596,6 @@ class OutputContour(object):
             # reset the direction of the final contour
             self.clockwise = inputContour.clockwise
             return True
-        return False
-
-    def reCurveFromInputContourSegments(self, inputContour):
-        return
-        # match individual segments
-        if self.clockwise:
-            inputSegments = inputContour.clockwiseSegments
-        else:
-            inputSegments = inputContour.counterClockwiseSegments
-        for inputSegment in inputSegments:
-            # skip used
-            if inputSegment.used:
-                continue
-            # skip if the input contains more points than the entire output contour
-            if len(inputSegment.flat) > len(self.segments):
-                continue
-            # skip if the input end is not in the contour
-            inputSegmentLastPoint = inputSegment.flat[-1]
-            outputFlat = [segment.points[-1] for segment in self.segments]
-            if inputSegmentLastPoint not in outputFlat:
-                continue
-            # work through all output segments
-            for outputSegmentIndex, outputSegment in enumerate(self.segments):
-                # skip finalized
-                if outputSegment.final:
-                    continue
-                # skip if the output point doesn't match the input end
-                if outputSegment.points[-1] != inputSegmentLastPoint:
-                    continue
-                # make a set of ranges for slicing the output into a testable list of points
-                inputLength = len(inputSegment.flat)
-                outputRanges = []
-                outputSegmentIndex += 1
-                if outputSegmentIndex - inputLength < 0:
-                    r1 = (len(self.segments) + outputSegmentIndex - inputLength, len(self.segments))
-                    outputRanges.append(r1)
-                    r2 = (0, outputSegmentIndex)
-                    outputRanges.append(r2)
-                else:
-                    outputRanges.append((outputSegmentIndex - inputLength, outputSegmentIndex))
-                # gather the output segments
-                testableOutputSegments = []
-                for start, end in outputRanges:
-                    testableOutputSegments += self.segments[start:end]
-                # create a list of points
-                test = []
-                for s in testableOutputSegments:
-                    # stop if a segment is final
-                    if s.final:
-                        test = None
-                        break
-                    test.append(s.points[-1])
-                if test == inputSegment.flat and inputSegment.segmentType != "line":
-                    # insert new segment
-                    newSegment = OutputSegment(
-                        segmentType=inputSegment.segmentType,
-                        points=[
-                            OutputPoint(
-                                coordinates=point.coordinates,
-                                segmentType=point.segmentType,
-                                smooth=point.smooth,
-                                name=point.name,
-                                kwargs=point.kwargs
-                            )
-                            for point in inputSegment.points
-                        ],
-                        final=True
-                    )
-                    self.segments.insert(outputSegmentIndex, newSegment)
-                    # remove old segments
-                    # XXX this is sloppy
-                    for start, end in outputRanges:
-                        if start > outputSegmentIndex:
-                            start += 1
-                            end += 1
-                        del self.segments[start:end]
-                    # flag the original as used
-                    inputSegment.used = True
-                    break
-        # ? match line start points (to prevent curve fit in shortened line)
         return False
 
     def reCurveSubSegmentsCheckInputContoursOnHasCurve(self, inputContours):
@@ -1006,11 +931,18 @@ class OutputContour(object):
             points.extend(segment.points)
 
         hasOnCurve = False
-        for point in points:
+        originalStartingPoints = []
+        for index, point in enumerate(points):
             if point.segmentType is not None:
                 hasOnCurve = True
-                break
-        if hasOnCurve:
+                if point.kwargs is not None and point.kwargs.get("startingPoint"):
+                    distanceFromOrigin = math.hypot(*point)
+                    originalStartingPoints.append((distanceFromOrigin, index))
+        if originalStartingPoints:
+            # use the original starting point that is closest to the origin
+            startingPointIndex = sorted(originalStartingPoints)[0][1]
+            points = points[startingPointIndex:] + points[:startingPointIndex]
+        elif hasOnCurve:
             while points[0].segmentType is None:
                 p = points.pop(0)
                 points.append(p)
@@ -1049,25 +981,6 @@ class OutputSegment(object):
 
 class OutputPoint(InputPoint):
     pass
-
-
-# -------------
-# Ouput Support
-# -------------
-
-def _getClockwise(points):
-    """
-    Very quickly get the direction for points.
-    This only works for contours that *do not*
-    self-intersect. It works by finding the area
-    of the polygon. positive is counter-clockwise,
-    negative is clockwise.
-    """
-    # quickly make segments
-    segments = zip(points, points[1:] + [points[0]])
-    # get the area
-    area = sum([x0 * y1 - x1 * y0 for ((x0, y0), (x1, y1)) in segments])
-    return area <= 0
 
 
 # ----------
@@ -1154,7 +1067,7 @@ def _scaleSinglePoint(point, scale=1, convertToInteger=True):
     if convertToInteger:
         return int(round(x * scale)), int(round(y * scale))
     else:
-        (x * scale, y * scale)
+        return (x * scale, y * scale)
 
 
 def _intPoint(pt):
@@ -1190,7 +1103,6 @@ def _flattenSegment(segment, approximateSegmentLength=_approximateSegmentLength)
     The first and last points in the segment must be
     on curves. The returned list of points will not
     include the first on curve point.
-
     false curves (where the off curves are not any
     different from the on curves) must not be sent here.
     duplicate points must not be sent here.

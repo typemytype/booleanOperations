@@ -1,4 +1,1 @@
-include MANIFEST.in LICENSE README.md
-include setup.py
-recursive-include Lib *.py
-recursive-include cppWrapper *.cpp *.hpp *.pyx
+exclude .travis.yml appveyor.yml .gitignore

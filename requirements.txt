@@ -1,0 +1,5 @@
+pyclipper==1.0.5
+# fontTools.ufoLib is not imported directly by booleanOperations, but
+# the test suite needs defcon, which in turns requires fonttools installed
+# with [ufo] support
+fonttools[ufo]==3.32.0

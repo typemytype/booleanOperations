@@ -2,17 +2,11 @@ from __future__ import print_function, division, absolute_import
 import weakref
 from copy import deepcopy
 
-try:
-    from robofab.pens.pointPen import AbstractPointPen
-    from robofab.pens.adapterPens import PointToSegmentPen, SegmentToPointPen
-    from robofab.pens.boundsPen import BoundsPen
-except:
-    from ufoLib.pointPen import (
-        AbstractPointPen, PointToSegmentPen, SegmentToPointPen)
-    from fontTools.pens.boundsPen import BoundsPen
+from fontTools.pens.pointPen import (
+    AbstractPointPen, PointToSegmentPen, SegmentToPointPen)
+from fontTools.pens.boundsPen import BoundsPen
 
-from defcon.pens.clockwiseTestPointPen import ClockwiseTestPointPen
-
+from fontTools.pens.areaPen import AreaPen
 from .booleanOperationManager import BooleanOperationManager
 
 manager = BooleanOperationManager()
@@ -54,7 +48,7 @@ class BooleanGlyphDataPointPen(AbstractPointPen):
             contour._points = points
             self._glyph.contours.append(contour)
 
-    def beginPath(self):
+    def beginPath(self, identifier=None):
         self._points = []
 
     def addPoint(self, pt, segmentType=None, smooth=False, name=None, **kwargs):
@@ -95,9 +89,10 @@ class BooleanContour(object):
 
     def _get_clockwise(self):
         if self._clockwise is None:
-            pointPen = ClockwiseTestPointPen()
-            self.drawPoints(pointPen)
-            self._clockwise = pointPen.getIsClockwise()
+            pen = AreaPen()
+            pen.endPath = pen.closePath
+            self.draw(pen)
+            self._clockwise = pen.value < 0
         return self._clockwise
 
     clockwise = property(_get_clockwise)
