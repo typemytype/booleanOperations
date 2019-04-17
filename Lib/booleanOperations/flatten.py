@@ -240,25 +240,23 @@ class InputSegment(object):
             print("quadSegments = %s" % quadSegments)
             print("tValues =", tValues)
             fullSegments = []
-            p = self.previousOnCurve
+            prevOn = self.previousOnCurve
             for off, on in quadSegments:
-                fullSegments.append((p, off, on))
-                p = on
+                fullSegments.append((prevOn, off, on))
+                prevOn = on
 
+            print("full =", fullSegments)
             newOnCurves = []
             for t, index in reversed(tValues):
-
-                if index == 0:
-                    on1 = self.previousOnCurve
-                else:
-                    on1 = quadSegments[index-1][-1]
-                off, on2 = quadSegments[index]
+                on1, off, on2 = fullSegments[index]
                 subSegments = bezierTools.splitQuadraticAtT(on1, off, on2, t)
                 print("subSegments =", subSegments)
                 fullSegments = fullSegments[:index] + subSegments + fullSegments[index+1:]
 
                 newOnCurves.append(subSegments[0][-1])
 
+            print("inserted full =", fullSegments)
+            print("newOnCurves =", newOnCurves)
             segments = [[self.previousOnCurve]]
             for on1, off, on2 in fullSegments:
                 segments[-1].append(off)
@@ -267,8 +265,7 @@ class InputSegment(object):
                     segments.append([on2])
 
             segments[-1].append(on2)
-            print(tValues)
-            print(segments)
+            print("newSegments =", segments)
             print()
             return segments
         else:
