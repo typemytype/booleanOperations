@@ -208,16 +208,18 @@ class InputSegment(object):
         reversedFlatPoints.reverse()
         return reversedFlatPoints
 
-    def split(self, tValues):
+    def split(self, tValues, curveNeeded):
         """
         Split the segment according the t values
+        and return the needed part
         """
         if self.segmentType == "curve":
             on1 = self.previousOnCurve
             off1 = self.points[0].coordinates
             off2 = self.points[1].coordinates
             on2 = self.points[2].coordinates
-            return bezierTools.splitCubicAtT(on1, off1, off2, on2, *tValues)
+            parts = bezierTools.splitCubicAtT(on1, off1, off2, on2, *tValues)
+            return [parts[curveNeeded]]
         elif self.segmentType == "line":
             segments = []
             x1, y1 = self.previousOnCurve
@@ -230,44 +232,69 @@ class InputSegment(object):
                 segments.append([pp, np])
                 pp = np
             segments.append([pp, (x2, y2)])
-            return segments
+            return [segments[curveNeeded]]
         elif self.segmentType == "qcurve":
             points = [p.coordinates for p in self.points]
             quadSegments = decomposeQuadraticSegment(points)
 
-            print("previousOnCurve =", self.previousOnCurve)
-            print("points =", points)
-            print("quadSegments = %s" % quadSegments)
-            print("tValues =", tValues)
             fullSegments = []
             prevOn = self.previousOnCurve
             for off, on in quadSegments:
                 fullSegments.append((prevOn, off, on))
                 prevOn = on
 
-            print("full =", fullSegments)
             newOnCurves = []
             for t, index in reversed(tValues):
                 on1, off, on2 = fullSegments[index]
                 subSegments = bezierTools.splitQuadraticAtT(on1, off, on2, t)
-                print("subSegments =", subSegments)
                 fullSegments = fullSegments[:index] + subSegments + fullSegments[index+1:]
-
                 newOnCurves.append(subSegments[0][-1])
 
-            print("inserted full =", fullSegments)
-            print("newOnCurves =", newOnCurves)
-            segments = [[self.previousOnCurve]]
-            for on1, off, on2 in fullSegments:
-                segments[-1].append(off)
-                if on2 in newOnCurves:
-                    segments[-1].append(on2)
-                    segments.append([on2])
+            # split on new oncurves
+            parts = [[]]
+            for segment in fullSegments:
+                parts[-1].append(segment)
+                if segment[-1] in newOnCurves:
+                    parts.append([])
 
-            segments[-1].append(on2)
-            print("newSegments =", segments)
-            print()
-            return segments
+            part = parts[curveNeeded]
+            return part
+
+            # redecomposeQuadraticSegments = [[]]
+            # prefOff = None
+            # for on1, off, on2 in part:
+            #     if prefOff is None:
+            #         redecomposeQuadraticSegments[-1].append(on1)
+            #     elif _distance(prefOff, on1) != _distance(on1, off):
+            #         redecomposeQuadraticSegments[-1].append(on1)
+            #         redecomposeQuadraticSegments.append([on1])
+            #     redecomposeQuadraticSegments[-1].append(off)
+            #     prefOff = off
+            # return redecomposeQuadraticSegments
+
+            # print("redecomposeQuadraticSegments =", redecomposeQuadraticSegments)
+            # count = len(redecomposeQuadraticSegments)
+            # if count == 1:
+            #     return [], redecomposeQuadraticSegments[0], []
+            # elif count == 2:
+            #     return [], redecomposeQuadraticSegments[0], redecomposeQuadraticSegments[1]
+            # elif count == 3:
+            #     return redecomposeQuadraticSegments[0], redecomposeQuadraticSegments[1], redecomposeQuadraticSegments[2]
+
+
+            # print("inserted full =", fullSegments)
+            # print("newOnCurves =", newOnCurves)
+            # segments = [[self.previousOnCurve]]
+            # for on1, off, on2 in fullSegments:
+            #     segments[-1].append(off)
+            #     if on2 in newOnCurves:
+            #         segments[-1].append(on2)
+            #         segments.append([on2])
+
+            # segments[-1].append(on2)
+            # print("newSegments =", segments)
+            # print()
+            # return [], segments[curveNeeded], []
         else:
             raise NotImplementedError
 
@@ -884,17 +911,26 @@ class OutputContour(object):
                         previousIntersectionPoint = None
                     # if we found some tvalue, split the curve and get the requested parts of the splitted curves
                     if tValues:
-                        newCurve = inputSegment.split(tValues)
-                        newCurve = list(newCurve[curveNeeded])
+                        splittedCurves = inputSegment.split(tValues, curveNeeded)
+
                         for i, replace in replacePointOnNewCurve:
-                            newCurve[i] = replace
-                        newCurve = [OutputPoint(coordinates=p, segmentType=None) for p in newCurve[1:]]
-                        newCurve[-1].segmentType = inputSegment.segmentType
+                            splittedSegment = list(splittedCurves[i])
+                            splittedSegment[i] = replace
+                            splittedCurves[i] = splittedSegment
+
+                        newCurves = []
+                        for splittedCurve in splittedCurves:
+                            newCurve = [OutputPoint(coordinates=p, segmentType=None) for p in splittedCurve[1:]]
+                            newCurve[-1].segmentType = inputSegment.segmentType
+                            newCurves.append(newCurve)
+
                         if lastPointWithAttributes is not None:
-                            newCurve[-1].smooth = lastPointWithAttributes.smooth
-                            newCurve[-1].name = lastPointWithAttributes.name
-                            newCurve[-1].kwargs = lastPointWithAttributes.kwargs
-                        convertedSegments.extend(newCurve)
+                            newCurves[-1][-1].smooth = lastPointWithAttributes.smooth
+                            newCurves[-1][-1].name = lastPointWithAttributes.name
+                            newCurves[-1][-1].kwargs = lastPointWithAttributes.kwargs
+                        for newCurve in newCurves:
+                            convertedSegments.extend(newCurve)
+
                 # replace the the points with the converted segments
                 segment.points = convertedSegments
                 segment.segmentType = "reCurved"
