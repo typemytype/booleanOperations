@@ -12,3 +12,7 @@ Lib/booleanOperations.egg-info
 
 .tox/
 .cache/
+
+.vscode
+venv*
+.pytest*
