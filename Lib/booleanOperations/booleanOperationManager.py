@@ -3,6 +3,7 @@ from .flatten import InputContour, OutputContour
 from .exceptions import (
     InvalidSubjectContourError, InvalidClippingContourError, ExecutionError)
 import pyclipper
+import math
 
 
 """
@@ -88,10 +89,22 @@ def _performOperation(operation, subjectContours, clipContours, outPen):
     # curve fit
     for outputContour in outputContours:
         outputContour.reCurveSubSegments(inputContours)
-    # output the results
-    for outputContour in outputContours:
+
+    # output the results. IMPORTANT: pyclipper's contour order is undefined and
+    # can vary from platform to platform, so we sort by each contour's closest
+    # point (x, y) to origin, in ascending order.
+    for outputContour in sorted(
+        outputContours, key=lambda contour: _point_closest_to_origin(contour.segments),
+    ):
         outputContour.drawPoints(outPen)
+
     return outputContours
+
+
+def _point_closest_to_origin(segments):
+    points = [segment.points[0].coordinates for segment in segments if segment.points]
+    point_closest_to_origin = min(points, key=lambda point: math.hypot(*point))
+    return point_closest_to_origin
 
 
 class BooleanOperationManager(object):
