@@ -5,6 +5,10 @@ class BooleanOperationsError(Exception):
     """Base BooleanOperations exception"""
 
 
+class UnsupportedContourError(BooleanOperationsError):
+    """Raised when asked to perform an operation on an unsupported curve type."""
+
+
 class InvalidContourError(BooleanOperationsError):
     """Raised when any input contour is invalid"""
 

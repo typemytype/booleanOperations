@@ -3,7 +3,7 @@ import math
 from fontTools.misc import bezierTools
 from fontTools.pens.basePen import decomposeQuadraticSegment
 import pyclipper
-from .exceptions import OpenContourError
+from .exceptions import OpenContourError, UnsupportedContourError
 
 """
 To Do:
@@ -434,7 +434,7 @@ def _convertPointsToSegments(points, willBeReversed=False):
         # off curve, hold.
         if point.segmentType is None:
             offCurves.append(point)
-        else:
+        elif point.segmentType in {"curve", "line"}:
             segment = InputSegment(
                 points=offCurves + [point],
                 previousOnCurve=previousOnCurve,
@@ -443,6 +443,11 @@ def _convertPointsToSegments(points, willBeReversed=False):
             segments.append(segment)
             offCurves = []
             previousOnCurve = point.coordinates
+        else:
+            raise UnsupportedContourError(
+                "Trying to perform operation on unsupported segment type.",
+                point.segmentType
+            )
     assert not offCurves
     return segments
 
