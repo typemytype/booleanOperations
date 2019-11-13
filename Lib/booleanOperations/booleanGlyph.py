@@ -1,4 +1,3 @@
-from __future__ import print_function, division, absolute_import
 import weakref
 from copy import deepcopy
 
@@ -61,7 +60,7 @@ class BooleanGlyphDataPointPen(AbstractPointPen):
         self._glyph.components.append((baseGlyphName, transformation))
 
 
-class BooleanContour(object):
+class BooleanContour:
 
     """
     Contour like object.
@@ -107,7 +106,7 @@ class BooleanContour(object):
     bounds = property(_get_bounds)
 
 
-class BooleanGlyph(object):
+class BooleanGlyph:
 
     """
     Glyph like object handling boolean operations.
