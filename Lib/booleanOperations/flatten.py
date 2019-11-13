@@ -1,4 +1,3 @@
-from __future__ import print_function, division, absolute_import
 import math
 from fontTools.misc import bezierTools
 from fontTools.pens.basePen import decomposeQuadraticSegment
@@ -57,7 +56,7 @@ _approximateSegmentLength = 5.3
 
 # Input
 
-class InputContour(object):
+class InputContour:
 
     def __init__(self, contour):
         # gather the point data
@@ -132,7 +131,7 @@ class InputContour(object):
         return False
 
 
-class InputSegment(object):
+class InputSegment:
 
     # __slots__ = ["points", "previousOnCurve", "scaledPreviousOnCurve", "flat", "used"]
 
@@ -257,7 +256,7 @@ class InputSegment(object):
             raise NotImplementedError
 
 
-class InputPoint(object):
+class InputPoint:
 
     __slots__ = ["coordinates", "segmentType", "smooth", "name", "kwargs"]
 
@@ -283,7 +282,7 @@ class InputPoint(object):
         return copy
 
     def __str__(self):
-        return "%s %s" % (self.segmentType, self.coordinates)
+        return f"{self.segmentType} {self.coordinates}"
 
     def __repr__(self):
         return self.__str__()
@@ -456,7 +455,7 @@ def _convertPointsToSegments(points, willBeReversed=False):
 # Output Objects
 # --------------
 
-class OutputContour(object):
+class OutputContour:
 
     def __init__(self, pointList):
         if pointList[0] == pointList[-1]:
@@ -932,7 +931,7 @@ class OutputContour(object):
         pointPen.endPath()
 
 
-class OutputSegment(object):
+class OutputSegment:
 
     __slots__ = ["segmentType", "points", "final"]
 

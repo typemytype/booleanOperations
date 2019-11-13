@@ -1,4 +1,3 @@
-from __future__ import print_function, division, absolute_import
 from .flatten import InputContour, OutputContour
 from .exceptions import (
     InvalidSubjectContourError, InvalidClippingContourError, ExecutionError)
@@ -94,7 +93,7 @@ def _performOperation(operation, subjectContours, clipContours, outPen):
     return outputContours
 
 
-class BooleanOperationManager(object):
+class BooleanOperationManager:
 
     @staticmethod
     def union(contours, outPen):
