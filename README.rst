@@ -195,4 +195,4 @@ List the **anchors** of the glyph.
    :target: https://travis-ci.org/typemytype/booleanOperations
 .. |PyPI| image:: https://img.shields.io/pypi/v/booleanOperations.svg
    :target: https://pypi.org/project/booleanOperations/
-.. |Python Versions| image:: https://img.shields.io/badge/python-2.7%2C%203.4%2C%203.5%2C%203.6-blue.svg
+.. |Python Versions| image:: https://img.shields.io/badge/python-3.6,%203.7-blue.svg

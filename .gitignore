@@ -12,3 +12,5 @@ Lib/booleanOperations.egg-info
 
 .tox/
 .cache/
+
+_version.py
