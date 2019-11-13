@@ -4,6 +4,7 @@ import sys
 import os
 import unittest
 
+import pytest
 from fontPens.digestPointPen import DigestPointPen
 
 import defcon
@@ -78,6 +79,20 @@ def _addGlyphTests():
 
 _addGlyphTests()
 
+def test_unsupported_qcurve():
+    font = defcon.Font()
+    g = font.newGlyph("test")
+    p = g.getPointPen()
+    p.beginPath()
+    p.addPoint((0, 0), segmentType="line")
+    p.addPoint((100, 0), segmentType="line")
+    p.addPoint((100, 100), segmentType="line")
+    p.addPoint((50, 100))
+    p.addPoint((0, 100), segmentType="qcurve")
+    p.endPath()
+
+    with pytest.raises(booleanOperations.exceptions.UnsupportedContourError):
+        booleanOperations.union(g, None)
 
 if __name__ == '__main__':
     sys.exit(unittest.main())
