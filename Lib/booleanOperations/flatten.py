@@ -1154,6 +1154,12 @@ def _mid(pt1, pt2):
     (x0, y0), (x1, y1) = pt1, pt2
     return 0.5 * (x0 + x1), 0.5 * (y0 + y1)
 
+def _getLinePoint(t, pt0, pt1):
+    if t == 0: 
+        return pt0
+    if t == 1: 
+        return pt1
+    return pt0[0] + (pt1[0]-pt0[0]) * t, pt0[1] + (pt1[1]-pt0[1]) * t
 
 def _getCubicPoint(t, pt0, pt1, pt2, pt3):
     if t == 0:
