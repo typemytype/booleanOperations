@@ -692,50 +692,36 @@ class OutputContour:
                     fp = segmentedFlatPoints[0][0]
                     lp = segmentedFlatPoints[-1][-1]
                     mergeFirstSegments = False
-                    duplicatePoint = 0
                     if fp in flatInputPoints and lp in flatInputPoints:
                         # fp and lp are "known" points with associated input
-                        # segments. If they're on the same segment, merge
-                        # them.
-                        # Otherwise, if the opposite segment is curved we
-                        # need to duplicate the point so that we have
-                        # the full curve when processing that segment.
-                        # However, there is an exception case: If the
-                        # inputSegment type is "curved" but it was encoded
-                        # for pyClipper as a line anyway, do nothing.
+                        # segments and fp is an isolated point in
+                        # segmentedFlatPoints[0]. If both points are
+                        # associated with the same input segment or if one
+                        # is the previous on-curve point for the other
+                        # segment (and the two are oriented correctly)
+                        # we want to merge the first and last segments.
                         firstInputSegment = flatInputPointsSegmentDict[fp]
                         lastInputSegment = flatInputPointsSegmentDict[lp]
                         reversedFirstInputSegment = reversedFlatInputPointsSegmentDict[fp]
                         reversedLastInputSegment = reversedFlatInputPointsSegmentDict[lp]
-                        # Note: len(segmentedFlatPoints[0]) == 0 in this code,
-                        # so firstCurved is at least very unlikely. I don't
-                        # think I've hit the firstCurved conditions below in
-                        # my generated test data.
                         firstCurved = firstInputSegment.segmentType == reversedFirstInputSegment.segmentType == "curve"
                         lastCurved = lastInputSegment.segmentType == reversedLastInputSegment.segmentType == "curve"
                         if firstCurved or lastCurved:
-                            if firstInputSegment == lastInputSegment or reversedFirstInputSegment == reversedLastInputSegment:
+                            if (firstInputSegment == lastInputSegment or
+                                    reversedFirstInputSegment == reversedLastInputSegment):
                                 mergeFirstSegments = True
-                            elif fp == lastInputSegment.scaledPreviousOnCurve and lastCurved:
-                                if lp == lastInputSegment.flat[-1]:
-                                    pass
-                                else:
-                                    duplicatePoint = 1
-                            elif lp == firstInputSegment.scaledPreviousOnCurve and firstCurved:
-                                if fp == firstInputSegment.flat[-1]:
-                                    pass
-                                else:
-                                    duplicatePoint = -1
-                            elif fp == reversedLastInputSegment.scaledPreviousOnCurve and lastCurved:
-                                if lp == reversedLastInputSegment.flat[-1]:
-                                    pass
-                                else:
-                                    duplicatePoint = 1
-                            elif lp == reversedFirstInputSegment.scaledPreviousOnCurve and firstCurved:
-                                if fp == reversedFirstInputSegment.flat[-1]:
-                                    pass
-                                else:
-                                    duplicatePoint = -1
+                            elif (fp == lastInputSegment.scaledPreviousOnCurve and
+                                    lastCurved and lp == lastInputSegment.flat[0]):
+                                mergeFirstSegments = True
+                            elif (lp == firstInputSegment.scaledPreviousOnCurve and
+                                    firstCurved and fp == firstInputSegment.flat[0]):
+                                mergeFirstSegments = True
+                            elif (fp == reversedLastInputSegment.scaledPreviousOnCurve and
+                                    lastCurved and lp == reversedLastInputSegment.flat[0]):
+                                mergeFirstSegments = True
+                            elif (lp == reversedFirstInputSegment.scaledPreviousOnCurve and
+                                    firstCurved and fp == reversedFirstInputSegment.flat[0]):
+                                mergeFirstSegments = True
                     elif not hasOncurvePoints and _distance(fp, lp):
                         # Merge last segment with first segment if the distance between the last point and the first
                         # point is less than the step distance between the last two points. _approximateSegmentLength
@@ -753,10 +739,6 @@ class OutputContour:
                         segmentedFlatPoints[0] = segmentedFlatPoints[-1] + segmentedFlatPoints[0]
                         segmentedFlatPoints.pop(-1)
                         mergeFirstSegments = False
-                    elif duplicatePoint == 1:
-                        segmentedFlatPoints[-1].append(segmentedFlatPoints[0][0])
-                    elif duplicatePoint == -1:
-                        segmentedFlatPoints[0].insert(0, segmentedFlatPoints[-1][-1])
                 convertedSegments = []
                 previousIntersectionPoint = None
                 if segmentedFlatPoints[-1][-1] in intersectionPoints:
