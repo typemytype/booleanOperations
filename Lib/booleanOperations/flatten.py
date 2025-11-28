@@ -255,6 +255,29 @@ class InputSegment:
         else:
             raise NotImplementedError
 
+    def tValueToPoint(self, t):
+        if self.segmentType == "curve":
+            on1 = self.previousOnCurve
+            off1 = self.points[0].coordinates
+            off2 = self.points[1].coordinates
+            on2 = self.points[2].coordinates
+            return _getCubicPoint(t, on1, off1, off2, on2)
+        elif self.segmentType == "line":
+            return _getLinePoint(t, self.previousOnCurve, self.points[0].coordinates)
+        elif self.segmentType == "qcurve":
+            raise NotImplementedError
+        else:
+            raise NotImplementedError
+
+    def hasPoint(self, p):
+        if p is None:
+            return False
+        for t in self.tValueForPoint(p):
+            pp = self.tValueToPoint(t)
+            if _distance(p, pp) < _approximateSegmentLength/100:
+                return True
+        return False
+
 
 class InputPoint:
 
@@ -816,6 +839,13 @@ class OutputContour:
                         continue
                     tValues = None
                     lastPointWithAttributes = None
+                    # Occasionally our logic about the previous intersection
+                    # point can drift out of sync with the current segment.
+                    # So check here if it is on the current segment and if
+                    # not set it to None
+                    if not inputSegment.hasPoint(previousIntersectionPoint):
+                        previousIntersectionPoint = None
+
                     if flatSegment[0] == inputSegment.flat[0] and flatSegment[-1] != inputSegment.flat[-1]:
                         # needed the first part of the segment
                         # if previousIntersectionPoint is None:
@@ -1137,6 +1167,12 @@ def _mid(pt1, pt2):
     (x0, y0), (x1, y1) = pt1, pt2
     return 0.5 * (x0 + x1), 0.5 * (y0 + y1)
 
+def _getLinePoint(t, pt0, pt1):
+    if t == 0: 
+        return pt0
+    if t == 1: 
+        return pt1
+    return pt0[0] + (pt1[0]-pt0[0]) * t, pt0[1] + (pt1[1]-pt0[1]) * t
 
 def _getCubicPoint(t, pt0, pt1, pt2, pt3):
     if t == 0:
