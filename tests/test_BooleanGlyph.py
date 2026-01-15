@@ -1,7 +1,8 @@
 from __future__ import print_function, division, absolute_import
 
-import sys
+import math
 import os
+import sys
 import unittest
 
 import pytest
@@ -12,6 +13,23 @@ import booleanOperations
 
 
 VERBOSE = False
+
+
+def _approx_equal(a, b):
+    """Check if two values are approximately equal, handling nested structures.
+
+    Uses math.isclose for float comparison to handle minor differences between
+    fonttools versions in splitCubicAtT precision.
+    """
+    if type(a) != type(b):
+        return False
+    if isinstance(a, (tuple, list)):
+        if len(a) != len(b):
+            return False
+        return all(_approx_equal(x, y) for x, y in zip(a, b))
+    if isinstance(a, float):
+        return math.isclose(a, b)
+    return a == b
 
 
 class BooleanTests(unittest.TestCase):
@@ -47,7 +65,10 @@ def _makeTestCase(glyph, booleanMethodName, args=None):
         func(*args, outPen=testPen)
         expectedPen = DigestPointPen()
         expectedGlyph.drawPoints(expectedPen)
-        self.assertEqual(testPen.getDigest(), expectedPen.getDigest(), "Glyph name '%s' failed for '%s'." % (glyph.name, booleanMethodName))
+        self.assertTrue(
+            _approx_equal(testPen.getDigest(), expectedPen.getDigest()),
+            "Glyph name '%s' failed for '%s'." % (glyph.name, booleanMethodName)
+        )
 
     return True, test
 
