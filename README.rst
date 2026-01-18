@@ -191,8 +191,8 @@ booleanGlyph.anchors
 
 List the **anchors** of the glyph.
 
-.. |Build Status| image:: https://api.travis-ci.org/typemytype/booleanOperations.svg
-   :target: https://travis-ci.org/typemytype/booleanOperations
+.. |Build Status| image:: https://github.com/typemytype/booleanOperations/actions/workflows/ci.yml/badge.svg
+   :target: https://github.com/typemytype/booleanOperations/actions/workflows/ci.yml
 .. |PyPI| image:: https://img.shields.io/pypi/v/booleanOperations.svg
    :target: https://pypi.org/project/booleanOperations/
-.. |Python Versions| image:: https://img.shields.io/badge/python-3.6,%203.7-blue.svg
+.. |Python Versions| image:: https://img.shields.io/badge/python-3.9+-blue.svg
