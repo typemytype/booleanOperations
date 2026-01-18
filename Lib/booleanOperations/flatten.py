@@ -143,7 +143,7 @@ class InputSegment:
         self.scaledPreviousOnCurve = _scaleSinglePoint(previousOnCurve, scale=clipperScale)
         self.used = False
         self.flat = []
-        # if the bcps are equal to the oncurves convert the segment to a line segment.
+        # if the bcps are equal to the oncurves, or are aligned with them, convert the segment to a line segment.
         # otherwise this causes an error when flattening.
         if self.segmentType == "curve":
             if previousOnCurve == points[0].coordinates and points[1].coordinates == points[-1].coordinates:
@@ -155,6 +155,11 @@ class InputSegment:
                 oncurve.segmentType = "line"
                 self.points = points = [oncurve]
             elif previousOnCurve[1] == points[0].coordinates[1] == points[1].coordinates[1] == points[-1].coordinates[1]:
+                oncurve = points[-1]
+                oncurve.segmentType = "line"
+                self.points = points = [oncurve]
+            elif (_pointOnLine(previousOnCurve, points[-1].coordinates, points[0].coordinates) and
+                  _pointOnLine(previousOnCurve, points[-1].coordinates, points[1].coordinates)):
                 oncurve = points[-1]
                 oncurve.segmentType = "line"
                 self.points = points = [oncurve]
